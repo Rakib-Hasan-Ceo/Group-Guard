@@ -1078,7 +1078,7 @@
         const parts = line.split('|').map(p => p.trim());
         if (parts.length >= 2) {
           const c = (parts[2] || '').toLowerCase();
-          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green', 'danger', 'primary', 'success', 'লাল', 'নীল', 'সবুজ'].includes(c) ? (['red', 'danger', 'লাল'].includes(c) ? 'red' : (['blue', 'primary', 'নীল'].includes(c) ? 'blue' : 'green')) : 'red' });
+          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green', 'danger', 'primary', 'success', 'লাল', 'নীল', 'সবুজ'].includes(c) ? (['red', 'danger', 'লাল'].includes(c) ? 'red' : (['blue', 'primary', 'নীল'].includes(c) ? 'blue' : 'green')) : 'green' });
         }
       });
       return rows;
@@ -1438,11 +1438,11 @@
         autoDeleteSeconds: 5,
         buttons: `📜 গ্রুপের নিয়ম দেখুন | https://t.me/${BOT_USERNAME}?start=rules_${safeId} | red`,
         messages: {
-          link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
-          forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
-          media: "⚠️ {user}, এই গ্রুপে ছবি বা ভিডিও পাঠানো অনুমোদিত নয়। মেসেজটি মুছে ফেলা হয়েছে।",
+          link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
+          forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
+          media: "⚠️ {user}, এই গ্রুপে ছবি বা ভিডিও পাঠানো অনুমোদিত নয়। মেসেজটি মুছে ফেলা হয়েছে।",
           sticker: "⚠️ {user}, এই গ্রুপে স্টিকার বা GIF পাঠানো নিষেধ।",
-          badword: "⚠️ {user}, অশালীন বা আপত্তিকর ভাষা ব্যবহারের কারণে আপনার মেসেজ মুছে ফেলা হয়েছে!"
+          badword: "⚠️ {user}, অশালীন বা আপত্তিকর ভাষা ব্যবহারের কারণে আপনার মেসেজ মুছে ফেলা হয়েছে!"
         }
       };
     }
@@ -1452,12 +1452,12 @@
       if (saved) return JSON.parse(saved);
       return {
         welcomeEnabled: true,
-        welcomeText: "🎉 স্বাগতম {user} আমাদের {group} গ্রুপে!\nনিয়ম মেনে গ্রুপে সক্রিয় থাকুন।",
-        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel | green\nহেল্প ডেস্ক | https://t.me/mychannel | blue",
+        welcomeText: "🎉 স্বাগতম {user} আমাদের {group} গ্রুপে!\nনিয়ম মেনে গ্রুপে সক্রিয় থাকুন।",
+        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel | green\nহেল্প ডেস্ক | https://t.me/mychannel | blue",
         welcomeAutoDeleteSecs: 30,
         goodbyeEnabled: false,
         goodbyeText: "👋 বিদায় {user}! আবার আসার অনুরোধ রইলো।",
-        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel | green"
+        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel | green"
       };
     }
 
