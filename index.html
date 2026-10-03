@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Alorhawa Group Guard</title>
+  <title>Alorhawa Group Guard — User Panel</title>
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS CDN -->
@@ -449,14 +449,14 @@
             <i data-lucide="message-square-warning" class="w-4 h-4 text-rose-500"></i>
             <span>Warning Messages & Rules Button Settings</span>
           </h3>
-          <p class="text-xs text-slate-500">কোনো কিছু ডিলিট হলে মেম্বারকে কী বার্তা দেওয়া হবে এবং নিচ দিয়ে কী বাটন থাকবে তা সেট করুন।</p>
+          <p class="text-xs text-slate-500">কোনো কিছু ডিলিট হলে মেম্বারকে কী বার্তা দেওয়া হবে এবং নিচ দিয়ে কী বাটন থাকবে তা সেট করুন।</p>
         </div>
 
         <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <div>
               <span class="text-xs font-bold text-slate-900 dark:text-white block">সতর্কবার্তা পাঠানো চালু রাখুন (Send Warnings)</span>
-              <span class="text-[11px] text-slate-500">মেসেজ ডিলিট হওয়ার সাথে সাথে মেম্বারকে নোটিশ দিবে।</span>
+              <span class="text-[11px] text-slate-500">মেসেজ ডিলিট হওয়ার সাথে সাথে মেম্বারকে নোটিশ দিবে।</span>
             </div>
             <input type="checkbox" id="warnSendEnabled" class="w-5 h-5 accent-brand-600">
           </div>
@@ -464,7 +464,7 @@
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <span class="text-xs font-bold text-slate-900 dark:text-white block">⏱️ কত সেকেন্ড পর সতর্কবার্তা মুছে যাবে? (Auto-Delete)</span>
-              <span class="text-[11px] text-slate-500">যাতে বটের মেসেজে গ্রুপ ভরে না যায়।</span>
+              <span class="text-[11px] text-slate-500">যাতে বটের মেসেজে গ্রুপ ভরে না যায়।</span>
             </div>
             <select id="warnAutoDeleteSeconds" class="text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 cursor-pointer">
               <option value="5" selected>৫ সেকেন্ড পর (5s)</option>
@@ -477,7 +477,7 @@
           </div>
 
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
-            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (কালার সিলেক্ট করুন):</label>
+            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস বাটন (কালার সিলেক্ট করুন):</label>
             <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/GroupxGuardBot | red" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
@@ -671,27 +671,37 @@
 
     <!-- ==================== TAB: RULES ==================== -->
     <div id="tabContent-rulesGen" class="tab-pane hidden space-y-4">
-      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
-        <div class="flex items-center justify-between">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+        <div>
           <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i>
-            <span>Group Rules Notice (বটের ইনবক্সের জন্য রুলস সেভ করুন)</span>
+            <span>Group Rules Notice (বটের ইনবক্সের জন্য রুলস ও বাটন সেভ করুন)</span>
           </h3>
+          <p class="text-xs text-slate-500">এখানে আপনার গ্রুপের সব নিয়ম ও নিচের রঙিন বাটনগুলো সেট করুন। গ্রুপে কেউ "📜 গ্রুপের নিয়ম দেখুন" বাটনে চাপ দিলে বটের ইনবক্সে এটি হুবহু চলে যাবে।</p>
         </div>
-        <p class="text-xs text-slate-500">এখানে আপনার গ্রুপের সব নিয়ম লিখুন। গ্রুপে কেউ "📜 গ্রুপের নিয়ম দেখুন" বাটনে চাপ দিলে বটের ইনবক্সে এই লেখাটিই চলে যাবে।</p>
-        
-        <textarea id="rulesNoticeBox" rows="8" placeholder="১. গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ।&#10;২. অন্য চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ।&#10;৩. অশালীন বা আপত্তিকর ভাষা ব্যবহার করা যাবে না।&#10;৪. গ্রুপের সকল নিয়ম মেনে চলুন।" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-sans text-slate-900 dark:text-slate-100"></textarea>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-          <button onclick="saveGroupRulesToBot()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition">
-            <i data-lucide="save" class="w-3.5 h-3.5"></i>
-            <span>💾 Save Rules (বটে রুলস সেভ করুন)</span>
-          </button>
-          
-          <button onclick="sendRulesToActiveGroup()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            <span>📢 Send Notice to Group</span>
-          </button>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">📜 রুলস নোটিশ টেক্সট:</label>
+            <textarea id="rulesNoticeBox" rows="6" placeholder="১. গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ।&#10;২. অন্য চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ।&#10;৩. অশালীন বা আপত্তিকর ভাষা ব্যবহার করা যাবে না।&#10;৪. গ্রুপের সকল নিয়ম মেনে চলুন।" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-sans text-slate-900 dark:text-slate-100"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">🔘 রুলসের নিচে যে বাটনগুলো থাকবে (নাম, লিংক ও কালার দিন):</label>
+            <textarea id="rulesButtons" rows="2" placeholder="মেইন চ্যানেল | https://t.me/mychannel | green&#10;অফিসিয়াল গ্রুপ | https://t.me/mygroup | blue" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <button onclick="saveGroupRulesToBot()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition active:scale-95">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i>
+              <span>💾 Save Rules (বটে রুলস ও বাটন সেভ করুন)</span>
+            </button>
+            
+            <button onclick="sendRulesToActiveGroup()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition active:scale-95">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>📢 Send Notice to Group</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -701,7 +711,7 @@
   <script>
     const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
     const BOT_ID = DEFAULT_BOT_TOKEN.split(':')[0];
-    const BOT_USERNAME = "GroupxGuardBot"; // 👈 আপনার বটের আসল ইউজারনেম
+    const BOT_USERNAME = "GroupxGuardBot";
     const WORKER_URL = "https://groupguard.myalorhawa.workers.dev";
 
     const AppState = {
@@ -719,7 +729,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
-      initButtonEditors(['warnButtons', 'welcomeButtons', 'goodbyeButtons']);
+      initButtonEditors(['warnButtons', 'welcomeButtons', 'goodbyeButtons', 'rulesButtons']);
       initUserProfile();
 
       try {
@@ -848,7 +858,7 @@
             renderActiveGroupHeader("0", false, { isAdmin: false });
             document.getElementById('noGroupActiveNotice').classList.remove('hidden');
           }
-          if (showToastMsg) showToast("অননুমোদিত গ্রুপ সরানো হয়েছে", "info");
+          if (showToastMsg) showToast("অননুমোদিত গ্রুপ সরানো হয়েছে", "info");
           return;
         }
 
@@ -870,10 +880,10 @@
         const isBotAdmin = status === 'administrator' || status === 'creator' || memRes.result?.can_delete_messages === true || memRes.result?.can_restrict_members === true;
 
         renderActiveGroupHeader(memberCount, isBotAdmin, AppState.userPermissions);
-        if (showToastMsg) showToast("গ্রুপ তথ্য রিফ্রেশ হয়েছে!", "success");
+        if (showToastMsg) showToast("গ্রুপ তথ্য রিফ্রেশ হয়েছে!", "success");
 
         if (isBotAdmin) {
-          syncGroupWithWorker(chatRes.result, isBotAdmin);
+          syncGroupWithWorker();
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
@@ -905,7 +915,8 @@
       }
     }
 
-    async function syncGroupWithWorker(chat, isAdmin) {
+    async function syncGroupWithWorker() {
+      if (!AppState.activeChatId) return;
       try {
         await fetch(`${WORKER_URL}/api/rules`, {
           method: "POST",
@@ -1008,7 +1019,7 @@
             </h3>
             <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
           </div>
-          <p class="text-xs text-slate-500">আপনার Telegram User ID দিয়ে ফটো ও তথ্য লোড করুন:</p>
+          <p class="text-xs text-slate-500">আপনার Telegram User ID দিয়ে ফটো ও তথ্য লোড করুন:</p>
           <div>
             <input type="text" id="syncUserIdInput" placeholder="User ID (যেমন: 123456789)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono" />
           </div>
@@ -1046,7 +1057,7 @@
         registerUserToWorker(profile);
         await loadAndValidateUserGroups();
         closeModal();
-        showToast("প্রোফাইল লোড ও সিঙ্ক হয়েছে!", "success");
+        showToast("প্রোফাইল লোড ও সিঙ্ক হয়েছে!", "success");
       } catch (err) {
         showToast("লোড ব্যর্থ: " + err.message, "error");
       }
@@ -1122,7 +1133,7 @@
         const urlIn = document.createElement('input');
         urlIn.type = 'text';
         urlIn.value = r.url;
-        urlIn.placeholder = 'লিংক (যেমন: https://t.me/' + BOT_USERNAME + ')';
+        urlIn.placeholder = 'লিংক (যেমন: https://t.me/mychannel)';
         urlIn.className = inputCls + ' font-mono';
         urlIn.addEventListener('input', () => { r.url = urlIn.value; syncButtonTextarea(id); });
         urlIn.addEventListener('blur', () => {
@@ -1175,7 +1186,7 @@
       add.className = 'w-full py-2 rounded-xl border border-dashed border-slate-400 dark:border-slate-600 text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
       add.innerText = '➕ নতুন বাটন যোগ করুন';
       add.addEventListener('click', () => {
-        (ButtonEditorState[id] = ButtonEditorState[id] || []).push({ name: '', url: '', color: 'red' });
+        (ButtonEditorState[id] = ButtonEditorState[id] || []).push({ name: '', url: '', color: 'green' });
         renderButtonEditor(id);
       });
       box.appendChild(add);
@@ -1194,7 +1205,6 @@
       refreshButtonEditors();
     }
 
-    // 🌟 কালার স্টাইল সঠিকভাবে টেলিগ্রাম বাটনে পাঠানোর পার্সার 🌟
     function parseInlineButtons(btnText) {
       if (!btnText || !btnText.trim()) return undefined;
       const rows = [];
@@ -1388,9 +1398,9 @@
 
         switchActiveGroup(chat.id);
         closeModal();
-        showToast("গ্রুপ সফলভাবে যুক্ত হয়েছে!", "success");
+        showToast("গ্রুপ সফলভাবে যুক্ত হয়েছে!", "success");
       } catch (err) {
-        showToast("গ্রুপ পাওয়া যায়নি: " + err.message, "error");
+        showToast("গ্রুপ পাওয়া যায়নি: " + err.message, "error");
       }
     }
 
@@ -1404,7 +1414,7 @@
       AppState.savedGroups.forEach(g => {
         localStorage.setItem(`agg_rules_${g.id}`, JSON.stringify(currentRules));
       });
-      showToast("বর্তমান রুলস আপনার সকল গ্রুপে প্রয়োগ করা হয়েছে!", "success");
+      showToast("বর্তমান রুলস আপনার সকল গ্রুপে প্রয়োগ করা হয়েছে!", "success");
     }
 
     // --- PER-GROUP CONFIGURATION GETTERS ---
@@ -1414,7 +1424,8 @@
       return {
         blockLinks: true, blockForwards: true, blockMedia: false,
         blockStickers: false, blockDocs: false, badWords: ['গালি১', 'অশালীন২', 'scam'],
-        noticeText: "১. গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ।\n২. অন্য চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ।\n৩. অশালীন ভাষা বা গালিগালাজ ব্যবহার নিষেধ।\n৪. কোনো প্রকার স্প্যামিং করা যাবে না।"
+        noticeText: "১. গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ।\n২. অন্য চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ।\n৩. অশালীন ভাষা বা গালিগালাজ ব্যবহার নিষেধ।\n৪. কোনো প্রকার স্প্যামিং করা যাবে না।",
+        rulesButtons: "মেইন চ্যানেল | https://t.me/mychannel | green"
       };
     }
 
@@ -1459,7 +1470,9 @@
       document.getElementById('ruleBlockStickers').checked = !!rules.blockStickers;
       document.getElementById('ruleBlockDocs').checked = !!rules.blockDocs;
       document.getElementById('rulesNoticeBox').value = rules.noticeText || '';
+      document.getElementById('rulesButtons').value = rules.rulesButtons || 'মেইন চ্যানেল | https://t.me/mychannel | green';
       renderBadWordsList(rules.badWords);
+      refreshButtonEditors();
     }
 
     function saveRuleForActiveGroup(name, val) {
@@ -1472,9 +1485,10 @@
       rules[name] = val;
       localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
       showToast("Rule updated for active group", "info");
-      syncGroupWithWorker({}, true);
+      syncGroupWithWorker();
     }
 
+    // 🌟 বটের ইনবক্সের জন্য রুলস ও বাটন এক ক্লিকে সেভ করা 🌟
     function saveGroupRulesToBot() {
       if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
       if (!AppState.userPermissions.isOwner && !AppState.userPermissions.canDelete) {
@@ -1482,22 +1496,24 @@
       }
 
       const text = document.getElementById('rulesNoticeBox').value.trim();
+      const btns = document.getElementById('rulesButtons').value.trim();
       if (!text) return showToast("রুলস নোটিশের টেক্সট লিখুন", "warning");
 
       const rules = getRulesForGroup(AppState.activeChatId);
       rules.noticeText = text;
+      rules.rulesButtons = btns;
       localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
-      syncGroupWithWorker({}, true);
-      showToast("✅ গ্রুপের রুলস বটের ইনবক্সের জন্য সফলভাবে সেভ হয়েছে!", "success");
+      syncGroupWithWorker();
+      showToast("✅ গ্রুপের রুলস ও বাটন বটের ইনবক্সের জন্য সেভ হয়েছে!", "success");
     }
 
     async function sendRulesToActiveGroup() {
       if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
       const text = document.getElementById('rulesNoticeBox').value.trim();
+      const btns = document.getElementById('rulesButtons').value.trim();
       if (!text) return showToast("রুলস টেক্সট লিখুন", "warning");
 
-      const safeId = AppState.activeChatId.replace('-', 'm');
-      const markup = parseInlineButtons(`📜 বটের ইনবক্সে রুলস পড়ুন | https://t.me/${BOT_USERNAME}?start=rules_${safeId} | red`);
+      const markup = parseInlineButtons(btns || `মেইন চ্যানেল | https://t.me/mychannel | green`);
 
       showToast("গ্রুপে রুলস পাঠানো হচ্ছে...", "info");
       try {
@@ -1508,12 +1524,12 @@
           reply_markup: markup
         });
         if (res.ok) {
-          showToast("রুলস গ্রুপে সফলভাবে পাঠানো হয়েছে!", "success");
+          showToast("রুলস গ্রুপে সফলভাবে পাঠানো হয়েছে!", "success");
         } else {
           showToast("ব্যর্থ: " + res.description, "error");
         }
       } catch (e) {
-        showToast("মেসেজ পাঠানো যায়নি", "error");
+        showToast("মেসেজ পাঠানো যায়নি", "error");
       }
     }
 
@@ -1581,7 +1597,7 @@
       cfg.messages.sticker = document.getElementById('warnMsgSticker').value.trim();
       cfg.messages.badword = document.getElementById('warnMsgBadword').value.trim();
       localStorage.setItem(`agg_warnings_${AppState.activeChatId}`, JSON.stringify(cfg));
-      showToast("সতর্কবার্তা ও বাটন সেটিংস সেভ হয়েছে!", "success");
+      showToast("সতর্কবার্তা ও বাটন সেটিংস সেভ হয়েছে!", "success");
     }
 
     function loadWelcomeConfigForActiveGroup() {
@@ -1730,7 +1746,7 @@
         violationType = "badword"; logTitle = "Bad Word";
       }
 
-      // Deletion & Specific Warning with Custom Colored Buttons
+      // Deletion & Specific Warning
       if (violationType) {
         try {
           await callTelegramApi('deleteMessage', { chat_id: chatId, message_id: m.message_id });
