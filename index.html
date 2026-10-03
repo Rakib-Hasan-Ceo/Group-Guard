@@ -238,8 +238,8 @@
         <div class="flex items-start gap-2">
           <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
           <div>
-            <strong class="font-bold block text-sm">⚠️ কোনো গ্রুপ এখনো যুক্ত করা হয়নি!</strong>
-            <span>বটটিকে আপনার টেলিগ্রাম গ্রুপে <b>Admin (সব পারমিশন সহ)</b> বানিয়ে নিচের বাটনে চাপুন।</span>
+            <strong class="font-bold block text-sm">⚠️ কোনো গ্রুপ এখনো যুক্ত করা হয়নি!</strong>
+            <span>বটটিকে আপনার টেলিগ্রাম গ্রুপে <b>Admin (সব পারমিশন সহ)</b> বানিয়ে নিচের বাটনে চাপুন।</span>
           </div>
         </div>
         <div class="flex gap-2 pt-1">
@@ -371,7 +371,7 @@
         </div>
         <div id="liveUpdatesList" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
         <div id="updatesEmptyNotice" class="text-center py-6 text-slate-400 text-xs">
-          গ্রুপে নতুন মেসেজ আসলে বা কোনো নিয়ম ভাঙলে তা লাইভ এখানে দেখতে পারবেন।
+          গ্রুপে নতুন মেসেজ আসলে বা কোনো নিয়ম ভাঙলে তা লাইভ এখানে দেখতে পারবেন।
         </div>
       </div>
     </div>
@@ -389,7 +389,7 @@
           </div>
           <button onclick="applyActiveRulesToAllGroups()" class="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 text-xs font-bold flex items-center gap-1 hover:bg-brand-100 self-start sm:self-auto">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-            <span>সব গ্রুপে এই রুলস প্রয়োগ করুন</span>
+            <span>সব গ্রুপে এই রুলস প্রয়োগ করুন</span>
           </button>
         </div>
 
@@ -404,8 +404,8 @@
 
           <div class="py-3 flex items-center justify-between gap-3">
             <div>
-              <span class="font-bold text-slate-900 dark:text-white block">↪️ Block Forwards (ফরওয়ার্ড বন্ধ)</span>
-              <span class="text-slate-500 text-[11px]">অন্য চ্যানেল বা গ্রুপ থেকে ফরওয়ার্ড করা মেসেজ ডিলিট হবে।</span>
+              <span class="font-bold text-slate-900 dark:text-white block">↪️ Block Forwards (ফরওয়ার্ড বন্ধ)</span>
+              <span class="text-slate-500 text-[11px]">অন্য চ্যানেল বা গ্রুপ থেকে ফরওয়ার্ড করা মেসেজ ডিলিট হবে।</span>
             </div>
             <input type="checkbox" id="ruleBlockForwards" onchange="saveRuleForActiveGroup('blockForwards', this.checked)" class="w-5 h-5 accent-brand-600">
           </div>
@@ -457,14 +457,14 @@
             <i data-lucide="message-square-warning" class="w-4 h-4 text-rose-500"></i>
             <span>Warning Messages & Rules Button Settings</span>
           </h3>
-          <p class="text-xs text-slate-500">কোনো কিছু ডিলিট হলে মেম্বারকে কী বার্তা দেওয়া হবে এবং নিচ দিয়ে কী বাটন থাকবে তা সেট করুন।</p>
+          <p class="text-xs text-slate-500">কোনো কিছু ডিলিট হলে মেম্বারকে কী বার্তা দেওয়া হবে এবং নিচ দিয়ে কী বাটন থাকবে তা সেট করুন।</p>
         </div>
 
         <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <div>
               <span class="text-xs font-bold text-slate-900 dark:text-white block">সতর্কবার্তা পাঠানো চালু রাখুন (Send Warnings)</span>
-              <span class="text-[11px] text-slate-500">মেসেজ ডিলিট হওয়ার সাথে সাথে মেম্বারকে নোটিশ দিবে।</span>
+              <span class="text-[11px] text-slate-500">মেসেজ ডিলিট হওয়ার সাথে সাথে মেম্বারকে নোটিশ দিবে।</span>
             </div>
             <input type="checkbox" id="warnSendEnabled" class="w-5 h-5 accent-brand-600">
           </div>
@@ -472,7 +472,7 @@
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <span class="text-xs font-bold text-slate-900 dark:text-white block">⏱️ কত সেকেন্ড পর সতর্কবার্তা মুছে যাবে? (Auto-Delete)</span>
-              <span class="text-[11px] text-slate-500">যাতে বটের মেসেজে গ্রুপ ভরে না যায়।</span>
+              <span class="text-[11px] text-slate-500">যাতে বটের মেসেজে গ্রুপ ভরে না যায়।</span>
             </div>
             <select id="warnAutoDeleteSeconds" class="text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 cursor-pointer">
               <option value="5">৫ সেকেন্ড পর (5s)</option>
@@ -486,7 +486,7 @@
 
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
             <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
-            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel&#10;মালিকের আইডি | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel&#10;মালিকের আইডি | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
 
@@ -499,7 +499,7 @@
           </div>
 
           <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">↪️ ফরওয়ার্ড মেসেজ দিলে যে সতর্কবার্তা যাবে:</label>
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">↪️ ফরওয়ার্ড মেসেজ দিলে যে সতর্কবার্তা যাবে:</label>
             <textarea id="warnMsgForward" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-sans"></textarea>
           </div>
 
@@ -532,9 +532,9 @@
         <div>
           <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
-            <span>Welcome & Goodbye Settings (বাটন সহ স্বাগতম ও বিদায় বার্তা)</span>
+            <span>Welcome & Goodbye Settings (বাটন সহ স্বাগতম ও বিদায় বার্তা)</span>
           </h3>
-          <p class="text-xs text-slate-500">নতুন কেউ জয়েন করলে বা গ্রুপ ত্যাগ করলে কাস্টম বাটন সহ বার্তা পাঠান।</p>
+          <p class="text-xs text-slate-500">নতুন কেউ জয়েন করলে বা গ্রুপ ত্যাগ করলে কাস্টম বাটন সহ বার্তা পাঠান।</p>
         </div>
 
         <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
@@ -550,11 +550,11 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ইনলাইন বাটন যোগ করুন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
-            <textarea id="welcomeButtons" rows="2" placeholder="অফিসিয়াল চ্যানেল | https://t.me/mychannel&#10;হেল্প ডেস্ক | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <textarea id="welcomeButtons" rows="2" placeholder="অফিসিয়াল চ্যানেল | https://t.me/mychannel&#10;হেল্প ডেস্ক | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
 
           <div class="flex items-center justify-between pt-1">
-            <span class="text-[11px] text-slate-500">স্বাগতম বার্তা স্বয়ংক্রিয় ডিলিট টাইমার:</span>
+            <span class="text-[11px] text-slate-500">স্বাগতম বার্তা স্বয়ংক্রিয় ডিলিট টাইমার:</span>
             <select id="welcomeAutoDeleteSecs" class="text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1">
               <option value="15">১৫ সেকেন্ড পর</option>
               <option value="30" selected>৩০ সেকেন্ড পর</option>
@@ -571,13 +571,13 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">বিদায় বার্তার টেক্সট ({user} = মেম্বার):</label>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">বিদায় বার্তার টেক্সট ({user} = মেম্বার):</label>
             <textarea id="goodbyeText" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs"></textarea>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">আবার জয়েন করার বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
-            <textarea id="goodbyeButtons" rows="2" placeholder="আবার জয়েন করুন | https://t.me/mygroup&#10;মেইন চ্যানেল | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">আবার জয়েন করার বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <textarea id="goodbyeButtons" rows="2" placeholder="আবার জয়েন করুন | https://t.me/mygroup&#10;মেইন চ্যানেল | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
 
@@ -596,7 +596,7 @@
             <i data-lucide="gavel" class="w-4 h-4 text-purple-500"></i>
             <span>Punish Member in Active Group</span>
           </h3>
-          <p class="text-xs text-slate-500">টার্গেট ইউজারের ID দিয়ে এক ক্লিকে শাস্তি প্রয়োগ করুন।</p>
+          <p class="text-xs text-slate-500">টার্গেট ইউজারের ID দিয়ে এক ক্লিকে শাস্তি প্রয়োগ করুন।</p>
         </div>
 
         <div class="space-y-3">
@@ -698,7 +698,7 @@
     const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
     // 🌟 সরাসরি টোকেন থেকে বটের আইডি এক্সট্রাক্ট (Not Admin গ্লিচ ফিক্স)
     const BOT_ID = DEFAULT_BOT_TOKEN.split(':')[0]; // "8842767848"
-    const WORKER_URL = "https://safegroup.myalorhawa.workers.dev";
+    const WORKER_URL = "https://groupguard.myalorhawa.workers.dev";
 
     const AppState = {
       token: DEFAULT_BOT_TOKEN,
@@ -761,7 +761,7 @@
         const chatRes = await callTelegramApi('getChat', { chat_id: AppState.activeChatId });
         AppState.activeChatInfo = chatRes.result;
 
-        // 👈 নির্ভরযোগ্য BOT_ID দিয়ে টেলিগ্রাম থেকে এডমিন চেক
+        // 👈 নির্ভরযোগ্য BOT_ID দিয়ে টেলিগ্রাম থেকে এডমিন চেক
         const memRes = await callTelegramApi('getChatMember', {
           chat_id: AppState.activeChatId,
           user_id: BOT_ID
@@ -777,7 +777,7 @@
         const isAdmin = status === 'administrator' || status === 'creator' || memRes.result?.can_delete_messages === true || memRes.result?.can_restrict_members === true;
 
         renderActiveGroupHeader(memberCount, isAdmin);
-        if (showToastMsg) showToast("গ্রুপ তথ্য রিফ্রেশ হয়েছে!", "success");
+        if (showToastMsg) showToast("গ্রুপ তথ্য রিফ্রেশ হয়েছে!", "success");
 
         syncGroupWithWorker(chatRes.result, isAdmin);
       } catch (err) {
@@ -831,6 +831,7 @@
         AppState.userProfile = profile;
         localStorage.setItem('agg_user_profile', JSON.stringify(profile));
         renderUserProfile(profile);
+        registerUserToWorker(profile);
       } else if (AppState.userProfile) {
         renderUserProfile(AppState.userProfile);
       } else {
@@ -842,6 +843,22 @@
           isPremium: false
         });
       }
+    }
+
+    // 🌟 ইউজার প্যানেলে প্রবেশ করলে ইউজারের তথ্য Worker এ রেজিস্টার (Admin Panel এ তালিকা দেখানোর জন্য)
+    async function registerUserToWorker(profile) {
+      if (!profile || !profile.id || profile.id === "Guest") return;
+      try {
+        await fetch(`${WORKER_URL}/api/users`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: String(profile.id),
+            name: profile.name || 'User',
+            username: (profile.username && profile.username !== 'No username') ? profile.username : ''
+          })
+        });
+      } catch (e) {}
     }
 
     function renderUserProfile(p) {
@@ -890,7 +907,7 @@
             </h3>
             <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
           </div>
-          <p class="text-xs text-slate-500">আপনার Telegram User ID দিয়ে ফটো ও তথ্য লোড করুন:</p>
+          <p class="text-xs text-slate-500">আপনার Telegram User ID দিয়ে ফটো ও তথ্য লোড করুন:</p>
           <div>
             <input type="text" id="syncUserIdInput" placeholder="User ID (যেমন: 123456789)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono" />
           </div>
@@ -926,7 +943,7 @@
         localStorage.setItem('agg_user_profile', JSON.stringify(profile));
         renderUserProfile(profile);
         closeModal();
-        showToast("প্রোফাইল লোড হয়েছে!", "success");
+        showToast("প্রোফাইল লোড হয়েছে!", "success");
       } catch (err) {
         showToast("লোড ব্যর্থ: " + err.message, "error");
       }
@@ -1092,9 +1109,9 @@
 
         switchActiveGroup(chat.id);
         closeModal();
-        showToast("গ্রুপ সফলভাবে যুক্ত হয়েছে!", "success");
+        showToast("গ্রুপ সফলভাবে যুক্ত হয়েছে!", "success");
       } catch (err) {
-        showToast("গ্রুপ পাওয়া যায়নি: " + err.message, "error");
+        showToast("গ্রুপ পাওয়া যায়নি: " + err.message, "error");
       }
     }
 
@@ -1108,7 +1125,7 @@
       AppState.savedGroups.forEach(g => {
         localStorage.setItem(`agg_rules_${g.id}`, JSON.stringify(currentRules));
       });
-      showToast("বর্তমান রুলস আপনার সকল গ্রুপে প্রয়োগ করা হয়েছে!", "success");
+      showToast("বর্তমান রুলস আপনার সকল গ্রুপে প্রয়োগ করা হয়েছে!", "success");
     }
 
     // --- PER-GROUP CONFIGURATION GETTERS ---
@@ -1127,13 +1144,13 @@
       return {
         enabled: true,
         autoDeleteSeconds: 10,
-        buttons: "📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel\nমালিকের আইডি | https://t.me/mychannel",
+        buttons: "📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel\nমালিকের আইডি | https://t.me/mychannel",
         messages: {
-          link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
-          forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
-          media: "⚠️ {user}, এই গ্রুপে ছবি বা ভিডিও পাঠানো অনুমোদিত নয়। মেসেজটি মুছে ফেলা হয়েছে।",
+          link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
+          forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
+          media: "⚠️ {user}, এই গ্রুপে ছবি বা ভিডিও পাঠানো অনুমোদিত নয়। মেসেজটি মুছে ফেলা হয়েছে।",
           sticker: "⚠️ {user}, এই গ্রুপে স্টিকার বা GIF পাঠানো নিষেধ।",
-          badword: "⚠️ {user}, অশালীন বা আপত্তিকর ভাষা ব্যবহারের কারণে আপনার মেসেজ মুছে ফেলা হয়েছে!"
+          badword: "⚠️ {user}, অশালীন বা আপত্তিকর ভাষা ব্যবহারের কারণে আপনার মেসেজ মুছে ফেলা হয়েছে!"
         }
       };
     }
@@ -1143,12 +1160,12 @@
       if (saved) return JSON.parse(saved);
       return {
         welcomeEnabled: true,
-        welcomeText: "🎉 স্বাগতম {user} আমাদের {group} গ্রুপে!\nনিয়ম মেনে গ্রুপে সক্রিয় থাকুন।",
-        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel\nহেল্প ডেস্ক | https://t.me/mychannel",
+        welcomeText: "🎉 স্বাগতম {user} আমাদের {group} গ্রুপে!\nনিয়ম মেনে গ্রুপে সক্রিয় থাকুন।",
+        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel\nহেল্প ডেস্ক | https://t.me/mychannel",
         welcomeAutoDeleteSecs: 30,
         goodbyeEnabled: false,
         goodbyeText: "👋 বিদায় {user}! আবার আসার অনুরোধ রইলো।",
-        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel"
+        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel"
       };
     }
 
@@ -1225,7 +1242,7 @@
       cfg.messages.sticker = document.getElementById('warnMsgSticker').value.trim();
       cfg.messages.badword = document.getElementById('warnMsgBadword').value.trim();
       localStorage.setItem(`agg_warnings_${AppState.activeChatId}`, JSON.stringify(cfg));
-      showToast("সতর্কবার্তা ও বাটন সেটিংস সেভ হয়েছে!", "success");
+      showToast("সতর্কবার্তা ও বাটন সেটিংস সেভ হয়েছে!", "success");
     }
 
     function loadWelcomeConfigForActiveGroup() {
@@ -1376,7 +1393,7 @@
           addLiveUpdateItem(`🗑️ [${group.title}] ${logTitle} Deleted from ${from.first_name || 'User'}: "${text.slice(0, 30)}..."`);
 
           if (warnCfg.enabled) {
-            const rawTemplate = warnCfg.messages[violationType] || "⚠️ {user}, আপনার নিয়মভঙ্গকারী মেসেজটি মুছে ফেলা হয়েছে।";
+            const rawTemplate = warnCfg.messages[violationType] || "⚠️ {user}, আপনার নিয়মভঙ্গকারী মেসেজটি মুছে ফেলা হয়েছে।";
             const userNameMention = from.id ? `<a href="tg://user?id=${from.id}">${escapeHtml(from.first_name || 'Member')}</a>` : escapeHtml(from.first_name || 'Member');
             const formattedMsg = rawTemplate.replace(/\{user\}/g, userNameMention);
             const markup = parseInlineButtons(warnCfg.buttons);
