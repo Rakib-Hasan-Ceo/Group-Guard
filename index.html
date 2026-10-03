@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Alorhawa Group Guard — Telegram Group Protector</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef8ff', 100: '#d8eeff', 200: '#b9e2ff', 300: '#89d1ff',
+              400: '#52b6ff', 500: '#2a95ff', 600: '#0077ff', 700: '#005fe6',
+              800: '#004ec2', 900: '#064299',
+            },
+            telegram: '#24A1DE',
+            darkBg: '#090d16',
+            darkCard: '#111827',
+            darkBorder: '#1f293d'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'Menlo', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    
+    /* Lock all textareas from manual resizing to keep UI clean */
+    textarea {
+      resize: none !important;
+    }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.5); }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+    }
+    .dark .glass-card {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(31, 41, 61, 0.85);
+    }
+
+    .glass-header {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    }
+    .dark .glass-header {
+      background: rgba(9, 13, 22, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(31, 41, 61, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col transition-colors duration-200 selection:bg-brand-500 selection:text-white overflow-x-hidden">
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed top-3 inset-x-3 sm:inset-x-auto sm:right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-auto"></div>
+  <div id="modalContainer" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto"></div>
+
+  <!-- ==================== TOP HEADER ==================== -->
+  <header class="sticky top-0 z-40 w-full glass-header">
+    <div class="w-full px-3.5 sm:px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center active:scale-95" title="Menu">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white shadow-md flex-shrink-0">
+            <i data-lucide="shield" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold text-sm sm:text-base tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Group Guard Pro</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center gap-1 transition active:scale-95">
+          <span id="langLabel">EN</span>
+        </button>
+        <button onclick="toggleTheme()" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-95" title="Toggle Theme">
+          <i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
+          <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== SLIDING SIDEBAR ==================== -->
+  <div id="sidebarBackdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+
+  <aside id="leftSidebar" class="fixed top-0 left-0 bottom-0 z-50 w-72 sm:w-80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200 dark:border-slate-800 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl">
+    <div class="h-14 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="h-7 w-7 rounded-lg bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+        </div>
+        <span class="font-bold text-sm text-slate-900 dark:text-white">Navigation Menu</span>
+      </div>
+      <button onclick="closeSidebar()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 bg-slate-50/50 dark:bg-slate-900/50">
+      <button onclick="pingApiHealth()" class="flex-1 py-1.5 px-2 rounded-lg text-[11px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+        <span id="pingText">⚡ Ping API</span>
+      </button>
+      <button onclick="toggleAppFullscreen()" class="py-1.5 px-3 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+        <i data-lucide="maximize" class="w-3.5 h-3.5"></i>
+        <span>Full Screen</span>
+      </button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1 text-xs">
+      <button onclick="switchTabAndFullScreen('overview')" data-tab="overview" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800">
+        <span class="flex items-center gap-2.5"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Group Dashboard</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('protect')" data-tab="protect" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i><span>Protection Rules</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('warnings')" data-tab="warnings" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="message-square-warning" class="w-4 h-4 text-rose-500"></i><span>Warning Messages & Buttons</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('welcomeGoodbye')" data-tab="welcomeGoodbye" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i><span>Welcome & Goodbye</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('moderation')" data-tab="moderation" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="gavel" class="w-4 h-4 text-purple-500"></i><span>Punish / Mute / Ban</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('serverLock')" data-tab="serverLock" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="lock" class="w-4 h-4 text-blue-500"></i><span>Server Lockdown</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('allGroups')" data-tab="allGroups" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="layers" class="w-4 h-4 text-brand-500"></i><span>All Managed Groups</span></span>
+        <span id="sideGroupCountBadge" class="text-[10px] px-1.5 py-0.2 rounded-full bg-brand-100 dark:bg-brand-900/50 text-brand-600">0</span>
+      </button>
+
+      <button onclick="switchTabAndFullScreen('rulesGen')" data-tab="rulesGen" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
+        <span class="flex items-center gap-2.5"><i data-lucide="file-text" class="w-4 h-4"></i><span>Rules Generator</span></span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
+      </button>
+    </nav>
+
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 text-center">
+      <button onclick="openAddGroupModal(); closeSidebar();" class="w-full p-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white transition flex items-center justify-center gap-1.5 text-xs font-semibold shadow-md">
+        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+        <span>+ Add Another Group</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN DASHBOARD ==================== -->
+  <main id="dashboardScreen" class="flex-1 w-full px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6">
+    
+    <!-- Top Group Switcher & Status Banner -->
+    <div class="glass-card rounded-2xl p-4 sm:p-5 mb-4 sm:mb-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden flex-shrink-0">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <select id="activeGroupSelector" onchange="switchActiveGroup(this.value)" class="text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-slate-900 dark:text-white max-w-[200px] sm:max-w-xs truncate cursor-pointer">
+                <option value="">গ্রুপ নির্বাচন করুন</option>
+              </select>
+              <span id="botAdminStatusBadge" class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Ready</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400 font-mono">
+              <span id="groupIdDisplay" class="text-slate-800 dark:text-slate-200">ID: —</span>
+              <button onclick="copyText(AppState.activeChatId, 'Group ID')" class="text-slate-400 hover:text-slate-600 p-0.5" title="Copy ID">
+                <i data-lucide="copy" class="w-3 h-3"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto justify-between sm:justify-end">
+          <button onclick="refreshActiveGroup(true)" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition flex items-center justify-center gap-1.5">
+            <i id="refreshSpinner" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Refresh</span>
+          </button>
+          <button onclick="openAddGroupModal()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 hover:bg-brand-100 transition flex items-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>+ Add Group</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prominent Guidance Banner when no group is added -->
+      <div id="noGroupActiveNotice" class="hidden mt-3 p-4 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-300 space-y-2">
+        <div class="flex items-start gap-2">
+          <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="font-bold block text-sm">⚠️ কোনো গ্রুপ এখনো যুক্ত করা হয়নি!</strong>
+            <span>বটটিকে আপনার টেলিগ্রাম গ্রুপে <b>Admin (সব পারমিশন সহ)</b> বানিয়ে নিচের বাটনে চাপুন।</span>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button onclick="openAddGroupModal()" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-sm">+ গ্রুপ যোগ করুন</button>
+          <button onclick="autoDiscoverGroups()" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-xs">⚡ অটো-স্ক্যান দিন</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 1: OVERVIEW ==================== -->
+    <div id="tabContent-overview" class="tab-pane space-y-4 sm:space-y-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="glass-card p-3 sm:p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold text-slate-500 uppercase">Members</span>
+            <i data-lucide="users" class="w-3.5 h-3.5 text-brand-500"></i>
+          </div>
+          <p id="statMemberCount" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">0</p>
+          <span class="text-[10px] text-slate-400 mt-1">Active Group</span>
+        </div>
+
+        <div class="glass-card p-3 sm:p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold text-slate-500 uppercase">Protected Groups</span>
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-emerald-500"></i>
+          </div>
+          <p id="statTotalManagedGroups" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">0</p>
+          <span class="text-[10px] text-slate-400 mt-1">Simultaneous Guard</span>
+        </div>
+
+        <div class="glass-card p-3 sm:p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold text-slate-500 uppercase">Deleted Msgs</span>
+            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500"></i>
+          </div>
+          <p id="statDeletedCount" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">0</p>
+          <span class="text-[10px] text-slate-400 mt-1">Across all groups</span>
+        </div>
+
+        <div class="glass-card p-3 sm:p-4 rounded-xl flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold text-slate-500 uppercase">Warnings Sent</span>
+            <i data-lucide="message-square-warning" class="w-3.5 h-3.5 text-amber-500"></i>
+          </div>
+          <p id="statWarningsCount" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">0</p>
+          <span class="text-[10px] text-slate-400 mt-1">With action buttons</span>
+        </div>
+      </div>
+
+      <!-- Live Poller Toggle -->
+      <div class="p-3.5 rounded-2xl glass-card border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 rounded-xl bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400">
+            <i data-lucide="radio" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-slate-900 dark:text-white block">Multi-Group Realtime Protection Poller</span>
+            <span class="text-[10px] text-slate-500">সকল সংরক্ষিত গ্রুপের মেসেজ একসাথে লাইভ মনিটর করা হচ্ছে</span>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="autoPollingToggle" onchange="toggleAutoPolling(this.checked)" class="sr-only peer" checked>
+          <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-brand-600"></div>
+        </label>
+      </div>
+
+      <!-- Live Stream Card with Clear Stream Button -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="inbox" class="w-4 h-4 text-brand-500"></i>
+            <span>Live Message Stream (All Groups)</span>
+          </h3>
+          <button onclick="clearLiveStream()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>Clear</span>
+          </button>
+        </div>
+        <div id="liveUpdatesList" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+        <div id="updatesEmptyNotice" class="text-center py-6 text-slate-400 text-xs">
+          গ্রুপে নতুন মেসেজ আসলে বা কোনো নিয়ম ভাঙলে তা লাইভ এখানে দেখতে পারবেন।
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: PROTECTION RULES ==================== -->
+    <div id="tabContent-protect" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+              <span>Protection Rules for Active Group</span>
+            </h3>
+            <p class="text-xs text-slate-500">বর্তমানে নির্বাচিত গ্রুপের জন্য রুলস অন/অফ করুন।</p>
+          </div>
+          <button onclick="applyActiveRulesToAllGroups()" class="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 text-xs font-bold flex items-center gap-1 hover:bg-brand-100 self-start sm:self-auto">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>সব গ্রুপে এই রুলস প্রয়োগ করুন</span>
+          </button>
+        </div>
+
+        <div class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">🔗 Block Links (লিংক বন্ধ)</span>
+              <span class="text-slate-500 text-[11px]">মেম্বাররা এই গ্রুপে কোনো লিংক দিতে পারবে না।</span>
+            </div>
+            <input type="checkbox" id="ruleBlockLinks" onchange="saveRuleForActiveGroup('blockLinks', this.checked)" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">↪️ Block Forwards (ফরওয়ার্ড বন্ধ)</span>
+              <span class="text-slate-500 text-[11px]">অন্য চ্যানেল বা গ্রুপ থেকে ফরওয়ার্ড করা মেসেজ ডিলিট হবে।</span>
+            </div>
+            <input type="checkbox" id="ruleBlockForwards" onchange="saveRuleForActiveGroup('blockForwards', this.checked)" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">🖼️ Block Photos & Videos (ছবি ও ভিডিও বন্ধ)</span>
+              <span class="text-slate-500 text-[11px]">কোনো মেম্বার ছবি বা ভিডিও পাঠাতে পারবে না।</span>
+            </div>
+            <input type="checkbox" id="ruleBlockMedia" onchange="saveRuleForActiveGroup('blockMedia', this.checked)" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">🎭 Block Stickers & GIFs (স্টিকার বন্ধ)</span>
+              <span class="text-slate-500 text-[11px]">স্টিকার, অ্যানিমেশন বা GIF মুছে ফেলবে।</span>
+            </div>
+            <input type="checkbox" id="ruleBlockStickers" onchange="saveRuleForActiveGroup('blockStickers', this.checked)" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block">📁 Block Documents & APK Files (ফাইল বন্ধ)</span>
+              <span class="text-slate-500 text-[11px]">APK, ZIP, PDF ফাইল পাঠানো বন্ধ থাকবে।</span>
+            </div>
+            <input type="checkbox" id="ruleBlockDocs" onchange="saveRuleForActiveGroup('blockDocs', this.checked)" class="w-5 h-5 accent-brand-600">
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="ban" class="w-4 h-4 text-red-500"></i>
+          <span>Bad Words & Abusive Filter</span>
+        </h3>
+        <div class="flex gap-2">
+          <input type="text" id="newBadWordInput" placeholder="শব্দ লিখুন (যেমন: খারাপশব্দ)" class="flex-1 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+          <button onclick="addBadWordToActiveGroup()" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold">Add</button>
+        </div>
+        <div id="badWordsChips" class="flex flex-wrap gap-1.5 pt-2"></div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: WARNING MESSAGES & BUTTONS ==================== -->
+    <div id="tabContent-warnings" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="message-square-warning" class="w-4 h-4 text-rose-500"></i>
+            <span>Warning Messages & Rules Button Settings</span>
+          </h3>
+          <p class="text-xs text-slate-500">কোনো কিছু ডিলিট হলে মেম্বারকে কী বার্তা দেওয়া হবে এবং নিচ দিয়ে কী বাটন থাকবে তা সেট করুন।</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-900 dark:text-white block">সতর্কবার্তা পাঠানো চালু রাখুন (Send Warnings)</span>
+              <span class="text-[11px] text-slate-500">মেসেজ ডিলিট হওয়ার সাথে সাথে মেম্বারকে নোটিশ দিবে।</span>
+            </div>
+            <input type="checkbox" id="warnSendEnabled" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-bold text-slate-900 dark:text-white block">⏱️ কত সেকেন্ড পর সতর্কবার্তা মুছে যাবে? (Auto-Delete)</span>
+              <span class="text-[11px] text-slate-500">যাতে বটের মেসেজে গ্রুপ ভরে না যায়।</span>
+            </div>
+            <select id="warnAutoDeleteSeconds" class="text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 cursor-pointer">
+              <option value="5">৫ সেকেন্ড পর (5s)</option>
+              <option value="10" selected>১০ সেকেন্ড পর (10s)</option>
+              <option value="15">১৫ সেকেন্ড পর (15s)</option>
+              <option value="30">৩০ সেকেন্ড পর (30s)</option>
+              <option value="60">১ মিনিট পর (60s)</option>
+              <option value="0">কখনো মুছবে না</option>
+            </select>
+          </div>
+
+          <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
+            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel&#10;মালিকের আইডি | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+          </div>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">কাস্টম সতর্কবার্তাগুলো ({user} = মেম্বারের নাম):</h4>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">🔗 লিংক দিলে যে সতর্কবার্তা যাবে:</label>
+            <textarea id="warnMsgLink" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-sans"></textarea>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">↪️ ফরওয়ার্ড মেসেজ দিলে যে সতর্কবার্তা যাবে:</label>
+            <textarea id="warnMsgForward" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-sans"></textarea>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">🖼️ ছবি বা ভিডিও দিলে যে সতর্কবার্তা যাবে:</label>
+            <textarea id="warnMsgMedia" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-sans"></textarea>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">🎭 স্টিকার বা GIF দিলে যে সতর্কবার্তা যাবে:</label>
+            <textarea id="warnMsgSticker" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-sans"></textarea>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">🚫 অশালীন শব্দ লিখলে যে সতর্কবার্তা যাবে:</label>
+            <textarea id="warnMsgBadword" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-sans"></textarea>
+          </div>
+
+          <button onclick="saveAllWarningTexts()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+            <span>Save All Warning Settings (সেভ করুন)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: WELCOME & GOODBYE ==================== -->
+    <div id="tabContent-welcomeGoodbye" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+            <span>Welcome & Goodbye Settings (বাটন সহ স্বাগতম ও বিদায় বার্তা)</span>
+          </h3>
+          <p class="text-xs text-slate-500">নতুন কেউ জয়েন করলে বা গ্রুপ ত্যাগ করলে কাস্টম বাটন সহ বার্তা পাঠান।</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900 dark:text-white">🎉 স্বাগতম বার্তা চালু রাখুন (Send Welcome)</span>
+            <input type="checkbox" id="welcomeEnabled" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">স্বাগতম বার্তার টেক্সট ({user} = মেম্বার, {group} = গ্রুপ নাম):</label>
+            <textarea id="welcomeText" rows="3" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ইনলাইন বাটন যোগ করুন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <textarea id="welcomeButtons" rows="2" placeholder="অফিসিয়াল চ্যানেল | https://t.me/mychannel&#10;হেল্প ডেস্ক | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-[11px] text-slate-500">স্বাগতম বার্তা স্বয়ংক্রিয় ডিলিট টাইমার:</span>
+            <select id="welcomeAutoDeleteSecs" class="text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1">
+              <option value="15">১৫ সেকেন্ড পর</option>
+              <option value="30" selected>৩০ সেকেন্ড পর</option>
+              <option value="60">১ মিনিট পর</option>
+              <option value="0">কখনো মুছবে না</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900 dark:text-white">👋 বিদায় বার্তা চালু রাখুন (Send Goodbye)</span>
+            <input type="checkbox" id="goodbyeEnabled" class="w-5 h-5 accent-brand-600">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">বিদায় বার্তার টেক্সট ({user} = মেম্বার):</label>
+            <textarea id="goodbyeText" rows="2" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">আবার জয়েন করার বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <textarea id="goodbyeButtons" rows="2" placeholder="আবার জয়েন করুন | https://t.me/mygroup&#10;মেইন চ্যানেল | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+          </div>
+        </div>
+
+        <button onclick="saveAllWelcomeConfig()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i>
+          <span>Save Welcome & Goodbye Settings (সেভ করুন)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: MODERATION ==================== -->
+    <div id="tabContent-moderation" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="gavel" class="w-4 h-4 text-purple-500"></i>
+            <span>Punish Member in Active Group</span>
+          </h3>
+          <p class="text-xs text-slate-500">টার্গেট ইউজারের ID দিয়ে এক ক্লিকে শাস্তি প্রয়োগ করুন।</p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-slate-500 text-xs mb-1">Target User ID</label>
+            <input type="text" id="modUserIdInput" placeholder="123456789" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono">
+          </div>
+
+          <div>
+            <label class="block text-slate-500 text-xs mb-1.5 font-bold">🔇 Mute Duration:</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button onclick="punishUser('mute', 300)" class="py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200">5 Mins</button>
+              <button onclick="punishUser('mute', 3600)" class="py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200">1 Hour</button>
+              <button onclick="punishUser('mute', 86400)" class="py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200">24 Hours</button>
+              <button onclick="punishUser('mute', 0)" class="py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-semibold">Forever</button>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <label class="block text-slate-500 text-xs mb-1.5 font-bold">⛔ Actions:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button onclick="punishUser('unmute', 0)" class="py-2.5 px-3 rounded-xl bg-emerald-600 text-white text-xs font-semibold flex items-center justify-center gap-1">
+                <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                <span>Unmute</span>
+              </button>
+              <button onclick="punishUser('kick', 0)" class="py-2.5 px-3 rounded-xl bg-amber-600 text-white text-xs font-semibold flex items-center justify-center gap-1">
+                <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+                <span>Kick</span>
+              </button>
+              <button onclick="punishUser('ban', 0)" class="py-2.5 px-3 rounded-xl bg-red-600 text-white text-xs font-semibold flex items-center justify-center gap-1">
+                <i data-lucide="ban" class="w-3.5 h-3.5"></i>
+                <span>Ban</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: SERVER LOCKDOWN ==================== -->
+    <div id="tabContent-serverLock" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="lock" class="w-4 h-4 text-blue-500"></i>
+          <span>Telegram Server-Level Permissions</span>
+        </h3>
+        <p class="text-xs text-slate-500">টেলিগ্রামের সার্ভারে সরাসরি গ্রুপ পারমিশন সেট করুন।</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+          <button onclick="applyServerLock('no_links')" class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-left text-xs font-medium flex items-center justify-between">
+            <span>🚫 Disable Link Previews</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </button>
+          <button onclick="applyServerLock('no_media')" class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-left text-xs font-medium flex items-center justify-between">
+            <span>🚫 Disable Photos & Videos</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </button>
+          <button onclick="applyServerLock('text_only')" class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-left text-xs font-medium flex items-center justify-between">
+            <span>📝 Text Only Mode</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </button>
+          <button onclick="applyServerLock('unlock_all')" class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border border-emerald-300 text-left text-xs font-medium flex items-center justify-between">
+            <span>🔓 Restore Default Permissions</span>
+            <i data-lucide="check" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: ALL MANAGED GROUPS ==================== -->
+    <div id="tabContent-allGroups" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i>
+            <span>All Your Saved Groups</span>
+          </h3>
+          <button onclick="autoDiscoverGroups()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white flex items-center gap-1">
+            <i data-lucide="scan-line" class="w-3.5 h-3.5"></i>
+            <span>Scan Bot Updates</span>
+          </button>
+        </div>
+        <p class="text-xs text-slate-500">যেকোনো গ্রুপে ক্লিক করে তাৎক্ষণিকভাবে সেটির রুলস ও মেম্বার নিয়ন্ত্রণ করুন।</p>
+        <div id="allGroupsCardsList" class="space-y-2 pt-2"></div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: RULES ==================== -->
+    <div id="tabContent-rulesGen" class="tab-pane hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Group Rules Notice</span>
+        </h3>
+        <textarea id="rulesNoticeBox" rows="6" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono"></textarea>
+        <button onclick="sendRulesToActiveGroup()" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold flex items-center gap-1.5">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>Send Notice to Active Group</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== JAVASCRIPT MULTI-GROUP & PARALLEL ENGINE ==================== -->
+  <script>
+    const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
+
+    const AppState = {
+      token: DEFAULT_BOT_TOKEN,
+      activeChatId: '',
+      savedGroups: JSON.parse(localStorage.getItem('agg_saved_groups') || '[]'),
+      botInfo: null,
+      activeChatInfo: null,
+      activeAdminMember: null,
+      stats: { deleted: 0, warnings: 0 },
+      pollingTimer: null,
+      lastUpdateId: 0
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+
+      try {
+        const meRes = await callTelegramApi('getMe');
+        AppState.botInfo = meRes.result;
+
+        const lastActive = localStorage.getItem('agg_last_active_group');
+        if (lastActive && AppState.savedGroups.some(g => String(g.id) === String(lastActive))) {
+          switchActiveGroup(lastActive);
+        } else if (AppState.savedGroups.length > 0) {
+          switchActiveGroup(AppState.savedGroups[0].id);
+        } else {
+          autoDiscoverGroups(true);
+        }
+
+        startLivePolling();
+      } catch (err) {
+        showToast("Bot Auth Error: " + err.message, "error");
+      }
+    });
+
+    async function callTelegramApi(method, params = {}) {
+      const endpoint = `https://api.telegram.org/bot${AppState.token}/${method}`;
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params)
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.description || "API Request Failed");
+        return data;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+    function parseInlineButtons(btnText) {
+      if (!btnText || !btnText.trim()) return undefined;
+      const rows = [];
+      const lines = btnText.split('\n').map(l => l.trim()).filter(Boolean);
+      lines.forEach(line => {
+        const parts = line.split('|').map(p => p.trim());
+        if (parts.length >= 2 && /^https?:\/\//i.test(parts[1])) {
+          rows.push([{ text: parts[0], url: parts[1] }]);
+        }
+      });
+      return rows.length > 0 ? { inline_keyboard: rows } : undefined;
+    }
+
+    // --- GROUP SWITCHING & MANAGEMENT ---
+    async function switchActiveGroup(chatId) {
+      if (!chatId) return;
+      AppState.activeChatId = String(chatId);
+      localStorage.setItem('agg_last_active_group', String(chatId));
+
+      document.getElementById('noGroupActiveNotice').classList.add('hidden');
+
+      await refreshActiveGroup(false);
+      renderGroupSelectorDropdown();
+      renderAllGroupsTab();
+      loadRulesForActiveGroup();
+      loadWarningsForActiveGroup();
+      loadWelcomeConfigForActiveGroup();
+    }
+
+    async function refreshActiveGroup(showToastMsg = false) {
+      if (!AppState.activeChatId) return;
+      const spinner = document.getElementById('refreshSpinner');
+      if (spinner) spinner.classList.add('animate-spin');
+
+      try {
+        const chatRes = await callTelegramApi('getChat', { chat_id: AppState.activeChatId });
+        AppState.activeChatInfo = chatRes.result;
+
+        const memRes = await callTelegramApi('getChatMember', { chat_id: AppState.activeChatId, user_id: AppState.botInfo.id });
+        AppState.activeAdminMember = memRes.result;
+
+        let memberCount = "—";
+        try {
+          const cRes = await callTelegramApi('getChatMemberCount', { chat_id: AppState.activeChatId });
+          memberCount = cRes.result;
+        } catch (e) {}
+
+        renderActiveGroupHeader(memberCount);
+        if (showToastMsg) showToast("গ্রুপ রিফ্রেশ সম্পন্ন!", "success");
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        if (spinner) spinner.classList.remove('animate-spin');
+      }
+    }
+
+    function renderActiveGroupHeader(memberCount) {
+      const c = AppState.activeChatInfo || {};
+      const mem = AppState.activeAdminMember || {};
+
+      document.getElementById('groupIdDisplay').innerText = `ID: ${c.id || AppState.activeChatId}`;
+      document.getElementById('statMemberCount').innerText = memberCount;
+      document.getElementById('statTotalManagedGroups').innerText = AppState.savedGroups.length;
+      document.getElementById('sideGroupCountBadge').innerText = AppState.savedGroups.length;
+
+      const isAdmin = mem.status === 'administrator' || mem.status === 'creator';
+      const badge = document.getElementById('botAdminStatusBadge');
+      badge.innerText = isAdmin ? "Admin Active" : "Not Admin";
+      badge.className = isAdmin 
+        ? "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300"
+        : "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300";
+    }
+
+    function renderGroupSelectorDropdown() {
+      const sel = document.getElementById('activeGroupSelector');
+      sel.innerHTML = '';
+      if (AppState.savedGroups.length === 0) {
+        sel.innerHTML = `<option value="">গ্রুপ নির্বাচন করুন</option>`;
+        document.getElementById('noGroupActiveNotice').classList.remove('hidden');
+        return;
+      }
+      AppState.savedGroups.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.innerText = g.title || g.id;
+        if (String(g.id) === String(AppState.activeChatId)) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderAllGroupsTab() {
+      const container = document.getElementById('allGroupsCardsList');
+      container.innerHTML = '';
+
+      if (AppState.savedGroups.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">কোনো সংরক্ষিত গ্রুপ নেই। "+ Add Group" বাটনে চাপুন।</p>`;
+        return;
+      }
+
+      AppState.savedGroups.forEach(g => {
+        const isCurrent = String(g.id) === String(AppState.activeChatId);
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-xl border flex items-center justify-between text-xs ${isCurrent ? 'bg-brand-50/60 dark:bg-brand-950/40 border-brand-300 dark:border-brand-700' : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'}`;
+        card.innerHTML = `
+          <div class="min-w-0">
+            <span class="font-bold block truncate text-slate-900 dark:text-white">${escapeHtml(g.title)}</span>
+            <span class="text-slate-500 font-mono text-[11px]">ID: ${g.id}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            ${isCurrent ? '<span class="text-[10px] bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 font-bold px-2 py-0.5 rounded">Active</span>' : `<button onclick="switchActiveGroup('${g.id}')" class="px-3 py-1.5 rounded-lg bg-brand-600 text-white font-semibold">Switch</button>`}
+            <button onclick="deleteGroupFromSaved('${g.id}')" class="p-1.5 text-slate-400 hover:text-red-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function deleteGroupFromSaved(chatId) {
+      AppState.savedGroups = AppState.savedGroups.filter(g => String(g.id) !== String(chatId));
+      localStorage.setItem('agg_saved_groups', JSON.stringify(AppState.savedGroups));
+      renderAllGroupsTab();
+      renderGroupSelectorDropdown();
+      if (String(chatId) === String(AppState.activeChatId)) {
+        if (AppState.savedGroups.length > 0) switchActiveGroup(AppState.savedGroups[0].id);
+        else {
+          AppState.activeChatId = '';
+          document.getElementById('noGroupActiveNotice').classList.remove('hidden');
+        }
+      }
+      showToast("Group removed from list", "info");
+    }
+
+    async function autoDiscoverGroups(silent = false) {
+      if (!silent) showToast("Scanning updates for groups...", "info");
+      try {
+        const res = await callTelegramApi('getUpdates', { limit: 100 });
+        let found = 0;
+        (res.result || []).forEach(u => {
+          const m = u.message || u.my_chat_member || u.channel_post;
+          if (m && m.chat && (m.chat.type === 'group' || m.chat.type === 'supergroup')) {
+            if (!AppState.savedGroups.some(g => String(g.id) === String(m.chat.id))) {
+              AppState.savedGroups.push({
+                id: String(m.chat.id),
+                title: m.chat.title || 'Discovered Group',
+                username: m.chat.username ? `@${m.chat.username}` : 'Group'
+              });
+              found++;
+            }
+          }
+        });
+        localStorage.setItem('agg_saved_groups', JSON.stringify(AppState.savedGroups));
+        renderAllGroupsTab();
+        renderGroupSelectorDropdown();
+
+        if (!AppState.activeChatId && AppState.savedGroups.length > 0) {
+          switchActiveGroup(AppState.savedGroups[0].id);
+        }
+
+        if (!silent) showToast(`${found} New group(s) discovered!`, "success");
+      } catch (err) {}
+    }
+
+    // --- ADD GROUP MODAL ---
+    function openAddGroupModal() {
+      const modal = document.getElementById('modalContainer');
+      modal.innerHTML = `
+        <div class="glass-card rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-brand-500"></i>
+              <span>নতুন গ্রুপ যুক্ত করুন</span>
+            </h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">গ্রুপের Chat ID বা @Username লিখুন</label>
+            <input type="text" id="modalChatIdInput" placeholder="-1001234567890 বা @mygroup" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono" />
+          </div>
+          <button onclick="submitAddGroupFromModal()" class="w-full py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold">কানেক্ট ও সেভ করুন</button>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    async function submitAddGroupFromModal() {
+      const input = document.getElementById('modalChatIdInput').value.trim();
+      if (!input) return showToast("Chat ID লিখুন", "warning");
+
+      try {
+        const chatRes = await callTelegramApi('getChat', { chat_id: input });
+        const chat = chatRes.result;
+
+        if (!AppState.savedGroups.some(g => String(g.id) === String(chat.id))) {
+          AppState.savedGroups.push({
+            id: String(chat.id),
+            title: chat.title || 'Telegram Group',
+            username: chat.username ? `@${chat.username}` : (chat.type || 'Group')
+          });
+          localStorage.setItem('agg_saved_groups', JSON.stringify(AppState.savedGroups));
+        }
+
+        switchActiveGroup(chat.id);
+        closeModal();
+        showToast("গ্রুপ সফলভাবে যুক্ত হয়েছে!", "success");
+      } catch (err) {
+        showToast("গ্রুপ পাওয়া যায়নি: " + err.message, "error");
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modalContainer').classList.add('hidden');
+    }
+
+    function applyActiveRulesToAllGroups() {
+      if (AppState.savedGroups.length <= 1) return showToast("কমপক্ষে একাধিক গ্রুপ যুক্ত থাকতে হবে", "info");
+      const currentRules = getRulesForGroup(AppState.activeChatId);
+      AppState.savedGroups.forEach(g => {
+        localStorage.setItem(`agg_rules_${g.id}`, JSON.stringify(currentRules));
+      });
+      showToast("বর্তমান রুলস আপনার সকল গ্রুপে প্রয়োগ করা হয়েছে!", "success");
+    }
+
+    // --- PER-GROUP CONFIGURATION GETTERS ---
+    function getRulesForGroup(chatId) {
+      const saved = localStorage.getItem(`agg_rules_${chatId}`);
+      if (saved) return JSON.parse(saved);
+      return {
+        blockLinks: true, blockForwards: true, blockMedia: false,
+        blockStickers: false, blockDocs: false, badWords: ['গালি১', 'অশালীন২', 'scam']
+      };
+    }
+
+    function getWarningsConfig(chatId) {
+      const saved = localStorage.getItem(`agg_warnings_${chatId}`);
+      if (saved) return JSON.parse(saved);
+      return {
+        enabled: true,
+        autoDeleteSeconds: 10,
+        buttons: "📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel\nমালিকের আইডি | https://t.me/mychannel",
+        messages: {
+          link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
+          forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
+          media: "⚠️ {user}, এই গ্রুপে ছবি বা ভিডিও পাঠানো অনুমোদিত নয়। মেসেজটি মুছে ফেলা হয়েছে।",
+          sticker: "⚠️ {user}, এই গ্রুপে স্টিকার বা GIF পাঠানো নিষেধ।",
+          badword: "⚠️ {user}, অশালীন বা আপত্তিকর ভাষা ব্যবহারের কারণে আপনার মেসেজ মুছে ফেলা হয়েছে!"
+        }
+      };
+    }
+
+    function getWelcomeConfig(chatId) {
+      const saved = localStorage.getItem(`agg_welcome_${chatId}`);
+      if (saved) return JSON.parse(saved);
+      return {
+        welcomeEnabled: true,
+        welcomeText: "🎉 স্বাগতম {user} আমাদের {group} গ্রুপে!\nনিয়ম মেনে গ্রুপে সক্রিয় থাকুন।",
+        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel\nহেল্প ডেস্ক | https://t.me/mychannel",
+        welcomeAutoDeleteSecs: 30,
+        goodbyeEnabled: false,
+        goodbyeText: "👋 বিদায় {user}! আবার আসার অনুরোধ রইলো।",
+        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel"
+      };
+    }
+
+    // --- UI CONFIG LOADERS & SAVERS ---
+    function loadRulesForActiveGroup() {
+      const rules = getRulesForGroup(AppState.activeChatId);
+      document.getElementById('ruleBlockLinks').checked = !!rules.blockLinks;
+      document.getElementById('ruleBlockForwards').checked = !!rules.blockForwards;
+      document.getElementById('ruleBlockMedia').checked = !!rules.blockMedia;
+      document.getElementById('ruleBlockStickers').checked = !!rules.blockStickers;
+      document.getElementById('ruleBlockDocs').checked = !!rules.blockDocs;
+      renderBadWordsList(rules.badWords);
+    }
+
+    function saveRuleForActiveGroup(name, val) {
+      const rules = getRulesForGroup(AppState.activeChatId);
+      rules[name] = val;
+      localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
+      showToast("Rule updated", "info");
+    }
+
+    function addBadWordToActiveGroup() {
+      const input = document.getElementById('newBadWordInput');
+      const val = input.value.trim();
+      if (!val) return;
+      const rules = getRulesForGroup(AppState.activeChatId);
+      if (!rules.badWords.includes(val)) {
+        rules.badWords.push(val);
+        localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
+        input.value = '';
+        renderBadWordsList(rules.badWords);
+      }
+    }
+
+    function removeBadWordFromActiveGroup(word) {
+      const rules = getRulesForGroup(AppState.activeChatId);
+      rules.badWords = rules.badWords.filter(w => w !== word);
+      localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
+      renderBadWordsList(rules.badWords);
+    }
+
+    function renderBadWordsList(list = []) {
+      const container = document.getElementById('badWordsChips');
+      container.innerHTML = '';
+      list.forEach(w => {
+        const span = document.createElement('span');
+        span.className = "px-2 py-0.5 rounded-lg bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-xs font-mono flex items-center gap-1";
+        span.innerHTML = `<span>${w}</span><button onclick="removeBadWordFromActiveGroup('${w}')" class="text-red-500 font-bold ml-1">×</button>`;
+        container.appendChild(span);
+      });
+    }
+
+    function loadWarningsForActiveGroup() {
+      const cfg = getWarningsConfig(AppState.activeChatId);
+      document.getElementById('warnSendEnabled').checked = !!cfg.enabled;
+      document.getElementById('warnAutoDeleteSeconds').value = String(cfg.autoDeleteSeconds ?? 10);
+      document.getElementById('warnButtons').value = cfg.buttons || '';
+      document.getElementById('warnMsgLink').value = cfg.messages.link || '';
+      document.getElementById('warnMsgForward').value = cfg.messages.forward || '';
+      document.getElementById('warnMsgMedia').value = cfg.messages.media || '';
+      document.getElementById('warnMsgSticker').value = cfg.messages.sticker || '';
+      document.getElementById('warnMsgBadword').value = cfg.messages.badword || '';
+    }
+
+    function saveAllWarningTexts() {
+      const cfg = getWarningsConfig(AppState.activeChatId);
+      cfg.enabled = document.getElementById('warnSendEnabled').checked;
+      cfg.autoDeleteSeconds = parseInt(document.getElementById('warnAutoDeleteSeconds').value);
+      cfg.buttons = document.getElementById('warnButtons').value.trim();
+      cfg.messages.link = document.getElementById('warnMsgLink').value.trim();
+      cfg.messages.forward = document.getElementById('warnMsgForward').value.trim();
+      cfg.messages.media = document.getElementById('warnMsgMedia').value.trim();
+      cfg.messages.sticker = document.getElementById('warnMsgSticker').value.trim();
+      cfg.messages.badword = document.getElementById('warnMsgBadword').value.trim();
+      localStorage.setItem(`agg_warnings_${AppState.activeChatId}`, JSON.stringify(cfg));
+      showToast("সতর্কবার্তা ও বাটন সেটিংস সেভ হয়েছে!", "success");
+    }
+
+    function loadWelcomeConfigForActiveGroup() {
+      const cfg = getWelcomeConfig(AppState.activeChatId);
+      document.getElementById('welcomeEnabled').checked = !!cfg.welcomeEnabled;
+      document.getElementById('welcomeText').value = cfg.welcomeText || '';
+      document.getElementById('welcomeButtons').value = cfg.welcomeButtons || '';
+      document.getElementById('welcomeAutoDeleteSecs').value = String(cfg.welcomeAutoDeleteSecs ?? 30);
+
+      document.getElementById('goodbyeEnabled').checked = !!cfg.goodbyeEnabled;
+      document.getElementById('goodbyeText').value = cfg.goodbyeText || '';
+      document.getElementById('goodbyeButtons').value = cfg.goodbyeButtons || '';
+    }
+
+    function saveAllWelcomeConfig() {
+      const cfg = {
+        welcomeEnabled: document.getElementById('welcomeEnabled').checked,
+        welcomeText: document.getElementById('welcomeText').value.trim(),
+        welcomeButtons: document.getElementById('welcomeButtons').value.trim(),
+        welcomeAutoDeleteSecs: parseInt(document.getElementById('welcomeAutoDeleteSecs').value),
+        goodbyeEnabled: document.getElementById('goodbyeEnabled').checked,
+        goodbyeText: document.getElementById('goodbyeText').value.trim(),
+        goodbyeButtons: document.getElementById('goodbyeButtons').value.trim()
+      };
+      localStorage.setItem(`agg_welcome_${AppState.activeChatId}`, JSON.stringify(cfg));
+      showToast("Welcome & Goodbye Settings Saved!", "success");
+    }
+
+    // --- PARALLEL MULTI-GROUP REALTIME POLLER ---
+    function startLivePolling() {
+      if (AppState.pollingTimer) clearInterval(AppState.pollingTimer);
+      AppState.pollingTimer = setInterval(async () => {
+        try {
+          const res = await callTelegramApi('getUpdates', {
+            offset: AppState.lastUpdateId + 1,
+            limit: 30,
+            timeout: 0,
+            allowed_updates: ['message', 'edited_message']
+          });
+
+          const updates = res.result || [];
+          for (const u of updates) {
+            AppState.lastUpdateId = u.update_id;
+            const m = u.message || u.edited_message;
+            if (m && m.chat) {
+              const targetChatId = String(m.chat.id);
+              const matchedGroup = AppState.savedGroups.find(g => String(g.id) === targetChatId);
+              if (matchedGroup) {
+                handleIncomingMessageForGroup(m, matchedGroup);
+              }
+            }
+          }
+        } catch (e) {}
+      }, 3000);
+    }
+
+    function toggleAutoPolling(on) {
+      if (on) {
+        startLivePolling();
+        showToast("Live Multi-Group Polling Started", "success");
+      } else {
+        if (AppState.pollingTimer) clearInterval(AppState.pollingTimer);
+        showToast("Live Polling Paused", "info");
+      }
+    }
+
+    async function handleIncomingMessageForGroup(m, group) {
+      const text = m.text || m.caption || '';
+      const from = m.from || {};
+      const chatId = String(group.id);
+
+      const rules = getRulesForGroup(chatId);
+      const warnCfg = getWarningsConfig(chatId);
+      const welcomeCfg = getWelcomeConfig(chatId);
+
+      // 1. Welcome New Members
+      if (welcomeCfg.welcomeEnabled && m.new_chat_members && m.new_chat_members.length > 0) {
+        m.new_chat_members.forEach(async (newMember) => {
+          if (newMember.id === AppState.botInfo?.id) return;
+          const userMention = `<a href="tg://user?id=${newMember.id}">${escapeHtml(newMember.first_name || 'Member')}</a>`;
+          const welcomeMsg = welcomeCfg.welcomeText.replace(/\{user\}/g, userMention).replace(/\{group\}/g, escapeHtml(m.chat.title || group.title));
+          const markup = parseInlineButtons(welcomeCfg.welcomeButtons);
+
+          addLiveUpdateItem(`👋 [${group.title}] New Member Joined: ${newMember.first_name || 'User'}`);
+          try {
+            const sent = await callTelegramApi('sendMessage', {
+              chat_id: chatId,
+              text: welcomeMsg,
+              parse_mode: 'HTML',
+              reply_markup: markup
+            });
+            if (welcomeCfg.welcomeAutoDeleteSecs > 0 && sent.result?.message_id) {
+              setTimeout(() => {
+                callTelegramApi('deleteMessage', { chat_id: chatId, message_id: sent.result.message_id }).catch(()=>{});
+              }, welcomeCfg.welcomeAutoDeleteSecs * 1000);
+            }
+          } catch(e) {}
+        });
+        return;
+      }
+
+      // 2. Goodbye Left Member
+      if (welcomeCfg.goodbyeEnabled && m.left_chat_member) {
+        const leftMember = m.left_chat_member;
+        const userMention = escapeHtml(leftMember.first_name || 'Member');
+        const goodbyeMsg = welcomeCfg.goodbyeText.replace(/\{user\}/g, userMention);
+        const markup = parseInlineButtons(welcomeCfg.goodbyeButtons);
+
+        addLiveUpdateItem(`🚪 [${group.title}] Member Left: ${leftMember.first_name || 'User'}`);
+        try {
+          await callTelegramApi('sendMessage', {
+            chat_id: chatId,
+            text: goodbyeMsg,
+            parse_mode: 'HTML',
+            reply_markup: markup
+          });
+        } catch(e) {}
+        return;
+      }
+
+      // 3. Rule Violations Detection for this Group
+      let violationType = null;
+      let logTitle = "";
+
+      if (rules.blockLinks) {
+        const hasLink = /(https?:\/\/|www\.|t\.me\/|telegram\.me\/)/i.test(text) || (m.entities || []).some(e => e.type === 'url' || e.type === 'text_link');
+        if (hasLink) { violationType = "link"; logTitle = "Link Sharing"; }
+      }
+      if (!violationType && rules.blockForwards && (m.forward_from || m.forward_from_chat || m.forward_date)) {
+        violationType = "forward"; logTitle = "Forwarded Message";
+      }
+      if (!violationType && rules.blockMedia && (m.photo || m.video || m.audio || m.voice)) {
+        violationType = "media"; logTitle = "Photo/Video Media";
+      }
+      if (!violationType && rules.blockStickers && (m.sticker || m.animation)) {
+        violationType = "sticker"; logTitle = "Sticker/GIF";
+      }
+      if (!violationType && text && (rules.badWords || []).some(w => text.toLowerCase().includes(w.toLowerCase()))) {
+        violationType = "badword"; logTitle = "Bad Word";
+      }
+
+      // Deletion & Specific Warning
+      if (violationType) {
+        try {
+          await callTelegramApi('deleteMessage', { chat_id: chatId, message_id: m.message_id });
+          AppState.stats.deleted++;
+          document.getElementById('statDeletedCount').innerText = AppState.stats.deleted;
+          addLiveUpdateItem(`🗑️ [${group.title}] ${logTitle} Deleted from ${from.first_name || 'User'}: "${text.slice(0, 30)}..."`);
+
+          if (warnCfg.enabled) {
+            const rawTemplate = warnCfg.messages[violationType] || "⚠️ {user}, আপনার নিয়মভঙ্গকারী মেসেজটি মুছে ফেলা হয়েছে।";
+            const userNameMention = from.id ? `<a href="tg://user?id=${from.id}">${escapeHtml(from.first_name || 'Member')}</a>` : escapeHtml(from.first_name || 'Member');
+            const formattedMsg = rawTemplate.replace(/\{user\}/g, userNameMention);
+            const markup = parseInlineButtons(warnCfg.buttons);
+
+            const sentRes = await callTelegramApi('sendMessage', {
+              chat_id: chatId,
+              text: formattedMsg,
+              parse_mode: 'HTML',
+              reply_markup: markup,
+              message_thread_id: m.is_topic_message ? m.message_thread_id : undefined
+            });
+
+            AppState.stats.warnings++;
+            document.getElementById('statWarningsCount').innerText = AppState.stats.warnings;
+
+            const autoDelSec = warnCfg.autoDeleteSeconds ?? 10;
+            if (autoDelSec > 0 && sentRes.result?.message_id) {
+              const botMsgId = sentRes.result.message_id;
+              setTimeout(async () => {
+                try {
+                  await callTelegramApi('deleteMessage', { chat_id: chatId, message_id: botMsgId });
+                } catch (e) {}
+              }, autoDelSec * 1000);
+            }
+          }
+        } catch (e) {}
+      } else {
+        addLiveUpdateItem(`💬 [${group.title}] ${from.first_name || 'User'}: "${text.slice(0, 35) || 'Media'}"`);
+      }
+    }
+
+    function addLiveUpdateItem(msg) {
+      const list = document.getElementById('liveUpdatesList');
+      const empty = document.getElementById('updatesEmptyNotice');
+      if (empty) empty.classList.add('hidden');
+
+      const div = document.createElement('div');
+      div.className = "p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs font-mono";
+      div.innerText = msg;
+      list.prepend(div);
+      if (list.children.length > 25) list.lastChild.remove();
+    }
+
+    function clearLiveStream() {
+      const list = document.getElementById('liveUpdatesList');
+      list.innerHTML = '';
+      const empty = document.getElementById('updatesEmptyNotice');
+      if (empty) empty.classList.remove('hidden');
+      showToast("Live stream cleared", "info");
+    }
+
+    // --- PUNISH ACTIONS ---
+    async function punishUser(action, seconds) {
+      const uid = document.getElementById('modUserIdInput').value.trim();
+      if (!uid) return showToast("User ID লিখুন", "warning");
+      if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
+
+      try {
+        if (action === 'mute') {
+          const until = seconds > 0 ? Math.floor(Date.now() / 1000) + Math.max(seconds, 35) : 0;
+          await callTelegramApi('restrictChatMember', {
+            chat_id: AppState.activeChatId,
+            user_id: uid,
+            permissions: { can_send_messages: false },
+            until_date: until
+          });
+          showToast(`User ${uid} Muted!`, "success");
+        } else if (action === 'unmute') {
+          await callTelegramApi('restrictChatMember', {
+            chat_id: AppState.activeChatId,
+            user_id: uid,
+            permissions: { can_send_messages: true, can_send_media_messages: true, can_send_other_messages: true }
+          });
+          showToast(`User ${uid} Unmuted!`, "success");
+        } else if (action === 'kick') {
+          await callTelegramApi('banChatMember', { chat_id: AppState.activeChatId, user_id: uid });
+          await callTelegramApi('unbanChatMember', { chat_id: AppState.activeChatId, user_id: uid });
+          showToast(`User ${uid} Kicked!`, "success");
+        } else if (action === 'ban') {
+          await callTelegramApi('banChatMember', { chat_id: AppState.activeChatId, user_id: uid });
+          showToast(`User ${uid} Banned!`, "success");
+        }
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function applyServerLock(type) {
+      if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
+      try {
+        let perms = {};
+        if (type === 'no_links') perms = { can_send_messages: true, can_send_media_messages: true, can_add_web_page_previews: false };
+        else if (type === 'no_media') perms = { can_send_messages: true, can_send_media_messages: false };
+        else if (type === 'text_only') perms = { can_send_messages: true, can_send_media_messages: false, can_send_other_messages: false };
+        else if (type === 'unlock_all') perms = { can_send_messages: true, can_send_media_messages: true, can_send_other_messages: true, can_add_web_page_previews: true };
+
+        await callTelegramApi('setChatPermissions', { chat_id: AppState.activeChatId, permissions: perms });
+        showToast("Server permissions updated!", "success");
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
+    }
+
+    // --- UI NAVIGATION ---
+    function toggleSidebar() {
+      const sidebar = document.getElementById('leftSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const isOpen = !sidebar.classList.contains('-translate-x-full');
+      if (isOpen) closeSidebar();
+      else {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      }
+    }
+
+    function closeSidebar() {
+      document.getElementById('leftSidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarBackdrop').classList.add('hidden');
+    }
+
+    function switchTabAndFullScreen(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+      const target = document.getElementById(`tabContent-${tabId}`);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.side-nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.className = "side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800";
+        } else {
+          btn.className = "side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60";
+        }
+      });
+
+      closeSidebar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    function toggleAppFullscreen() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen().catch(() => {});
+    }
+
+    function toggleTheme() { document.documentElement.classList.toggle('dark'); }
+    function toggleLanguage() {
+      AppState.lang = AppState.lang === 'bn' ? 'en' : 'bn';
+      document.getElementById('langLabel').innerText = AppState.lang === 'bn' ? 'EN' : 'বাংলা';
+    }
+
+    async function pingApiHealth() {
+      const btn = document.getElementById('pingText');
+      btn.innerText = '⚡ Testing...';
+      const start = performance.now();
+      try {
+        await callTelegramApi('getMe');
+        const ms = Math.round(performance.now() - start);
+        btn.innerText = `⚡ ${ms}ms`;
+        showToast(`Latency: ${ms}ms`, "success");
+      } catch (err) {
+        btn.innerText = '⚡ Failed';
+      }
+    }
+
+    function copyText(text, label = "Item") {
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`${label} copied!`, "success");
+      });
+    }
+
+    function showToast(message, type = "info") {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      let border = type === 'success' ? 'border-emerald-500 text-emerald-700 dark:text-emerald-300' : (type === 'error' ? 'border-red-500 text-red-700 dark:text-red-300' : 'border-brand-500 text-brand-700 dark:text-brand-300');
+      toast.className = `p-2.5 sm:p-3 rounded-xl glass-card border ${border} shadow-lg flex items-center gap-2 text-xs font-medium transform transition duration-300 translate-y-2 opacity-0`;
+      toast.innerHTML = `<i data-lucide="info" class="w-4 h-4 flex-shrink-0"></i><span class="flex-1 truncate">${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 20);
+      setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>
