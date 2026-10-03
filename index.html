@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Alorhawa Group Guard — Telegram Group Protector</title>
+  <title>Alorhawa Group Guard — User Panel</title>
+  <!-- Telegram Web App SDK (Auto Detects Telegram User Profile) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
@@ -183,10 +185,50 @@
   </aside>
 
   <!-- ==================== MAIN DASHBOARD ==================== -->
-  <main id="dashboardScreen" class="flex-1 w-full px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6">
+  <main id="dashboardScreen" class="flex-1 w-full px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4">
     
+    <!-- 🌟 LIVE USER IDENTITY PROFILE CARD (User enters and sees their Avatar & Info) 🌟 -->
+    <div id="userProfileIdentityCard" class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm border border-brand-500/30 relative overflow-hidden bg-gradient-to-r from-brand-950/20 via-slate-900/40 to-transparent">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <!-- Profile Avatar with Online Status Indicator -->
+          <div class="relative flex-shrink-0">
+            <div id="userAvatarWrapper" class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden border-2 border-white dark:border-slate-800">
+              <span id="userAvatarFallback">U</span>
+              <img id="userAvatarImg" src="" alt="Profile" class="hidden w-full h-full object-cover" />
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" title="Active"></div>
+          </div>
+
+          <!-- User Details (Name, Username, ID) -->
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <h2 id="userDisplayName" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">Telegram Member</h2>
+              <span id="userPremiumBadge" class="hidden text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 border border-amber-300">★ Premium</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400 mt-0.5 font-mono">
+              <span id="userUsernameDisplay" class="text-brand-600 dark:text-brand-400 font-semibold truncate">@username</span>
+              <span>•</span>
+              <span class="flex items-center gap-1">
+                ID: <span id="userIdDisplay" class="text-slate-800 dark:text-slate-200">00000000</span>
+                <button onclick="copyText(document.getElementById('userIdDisplay').innerText, 'User ID')" class="text-slate-400 hover:text-slate-600 p-0.5" title="Copy User ID">
+                  <i data-lucide="copy" class="w-3 h-3"></i>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Sync Identity button -->
+        <button onclick="openSyncUserModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-300 dark:border-slate-700 flex items-center gap-1.5 flex-shrink-0" title="Sync / Switch Profile">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-brand-500"></i>
+          <span class="hidden sm:inline">Sync Profile</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Top Group Switcher & Status Banner -->
-    <div class="glass-card rounded-2xl p-4 sm:p-5 mb-4 sm:mb-6 shadow-sm">
+    <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex items-center gap-3 min-w-0 flex-1">
           <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden flex-shrink-0">
@@ -637,7 +679,7 @@
     </div>
   </main>
 
-  <!-- ==================== JAVASCRIPT MULTI-GROUP & PARALLEL ENGINE ==================== -->
+  <!-- ==================== JAVASCRIPT LOGIC WITH LIVE USER PROFILE ==================== -->
   <script>
     const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
 
@@ -645,6 +687,7 @@
       token: DEFAULT_BOT_TOKEN,
       activeChatId: '',
       savedGroups: JSON.parse(localStorage.getItem('agg_saved_groups') || '[]'),
+      userProfile: JSON.parse(localStorage.getItem('agg_user_profile') || 'null'),
       botInfo: null,
       activeChatInfo: null,
       activeAdminMember: null,
@@ -655,6 +698,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
+      initUserProfile();
 
       try {
         const meRes = await callTelegramApi('getMe');
@@ -691,6 +735,116 @@
       }
     }
 
+    // --- 🌟 USER PROFILE DETECTION & RENDERER 🌟 ---
+    function initUserProfile() {
+      // 1. If opened inside Telegram WebApp, auto detect user!
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+        const tg = window.Telegram.WebApp.initDataUnsafe.user;
+        const profile = {
+          id: tg.id,
+          name: `${tg.first_name || ''} ${tg.last_name || ''}`.trim() || 'Telegram User',
+          username: tg.username ? `@${tg.username}` : 'No username',
+          photoUrl: tg.photo_url || null,
+          isPremium: tg.is_premium
+        };
+        AppState.userProfile = profile;
+        localStorage.setItem('agg_user_profile', JSON.stringify(profile));
+        renderUserProfileCard(profile);
+      } 
+      // 2. If remembered in localStorage
+      else if (AppState.userProfile) {
+        renderUserProfileCard(AppState.userProfile);
+      } 
+      // 3. Default fallback
+      else {
+        renderUserProfileCard({
+          id: "Guest",
+          name: "Telegram Member",
+          username: "@user",
+          photoUrl: null,
+          isPremium: false
+        });
+      }
+    }
+
+    function renderUserProfileCard(p) {
+      document.getElementById('userDisplayName').innerText = p.name || 'Telegram Member';
+      document.getElementById('userUsernameDisplay').innerText = p.username || 'No username';
+      document.getElementById('userIdDisplay').innerText = p.id || '—';
+
+      const img = document.getElementById('userAvatarImg');
+      const fallback = document.getElementById('userAvatarFallback');
+
+      if (p.photoUrl) {
+        img.src = p.photoUrl;
+        img.classList.remove('hidden');
+        fallback.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        fallback.classList.remove('hidden');
+        fallback.innerText = (p.name || 'U').charAt(0).toUpperCase();
+      }
+
+      const premBadge = document.getElementById('userPremiumBadge');
+      if (p.isPremium) premBadge.classList.remove('hidden');
+      else premBadge.classList.add('hidden');
+    }
+
+    function openSyncUserModal() {
+      const modal = document.getElementById('modalContainer');
+      modal.innerHTML = `
+        <div class="glass-card rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+              <i data-lucide="user" class="w-4 h-4 text-brand-500"></i>
+              <span>আপনার প্রোফাইল সিঙ্ক করুন</span>
+            </h3>
+            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+          <p class="text-xs text-slate-500">আপনার Telegram User ID দিয়ে প্রোফাইল ও ফটো লোড করুন:</p>
+          <div>
+            <input type="text" id="syncUserIdInput" placeholder="আপনার User ID (যেমন: 123456789)" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono" />
+          </div>
+          <button onclick="syncUserProfileFromApi()" class="w-full py-2.5 rounded-xl bg-brand-600 text-white text-xs font-bold">সিঙ্ক ও সেভ করুন</button>
+        </div>
+      `;
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    async function syncUserProfileFromApi() {
+      const uid = document.getElementById('syncUserIdInput').value.trim();
+      if (!uid) return showToast("User ID লিখুন", "warning");
+
+      try {
+        let photoUrl = null;
+        let name = "Telegram User (" + uid + ")";
+        let username = "@user";
+
+        // Fetch User Profile Photos via Telegram Bot API
+        try {
+          const photoRes = await callTelegramApi('getUserProfilePhotos', { user_id: uid, limit: 1 });
+          if (photoRes.ok && photoRes.result.total_count > 0) {
+            const fileId = photoRes.result.photos[0][0].file_id;
+            const fileRes = await callTelegramApi('getFile', { file_id: fileId });
+            if (fileRes.ok && fileRes.result.file_path) {
+              photoUrl = `https://api.telegram.org/file/bot${AppState.token}/${fileRes.result.file_path}`;
+            }
+          }
+        } catch (e) {}
+
+        const profile = { id: uid, name, username, photoUrl, isPremium: false };
+        AppState.userProfile = profile;
+        localStorage.setItem('agg_user_profile', JSON.stringify(profile));
+        renderUserProfileCard(profile);
+        closeModal();
+        showToast("প্রোফাইল সফলভাবে লোড হয়েছে!", "success");
+      } catch (err) {
+        showToast("লোড ব্যর্থ: " + err.message, "error");
+      }
+    }
+
+    // --- INLINE BUTTONS PARSER ---
     function parseInlineButtons(btnText) {
       if (!btnText || !btnText.trim()) return undefined;
       const rows = [];
@@ -704,7 +858,7 @@
       return rows.length > 0 ? { inline_keyboard: rows } : undefined;
     }
 
-    // --- GROUP SWITCHING & MANAGEMENT ---
+    // --- GROUP MANAGEMENT ---
     async function switchActiveGroup(chatId) {
       if (!chatId) return;
       AppState.activeChatId = String(chatId);
@@ -821,7 +975,7 @@
           document.getElementById('noGroupActiveNotice').classList.remove('hidden');
         }
       }
-      showToast("Group removed from list", "info");
+      showToast("Group removed from dashboard", "info");
     }
 
     async function autoDiscoverGroups(silent = false) {
@@ -854,7 +1008,6 @@
       } catch (err) {}
     }
 
-    // --- ADD GROUP MODAL ---
     function openAddGroupModal() {
       const modal = document.getElementById('modalContainer');
       modal.innerHTML = `
@@ -971,7 +1124,7 @@
       const rules = getRulesForGroup(AppState.activeChatId);
       rules[name] = val;
       localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
-      showToast("Rule updated", "info");
+      showToast("Rule updated for active group", "info");
     }
 
     function addBadWordToActiveGroup() {
