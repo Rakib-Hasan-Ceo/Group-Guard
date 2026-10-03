@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Alorhawa Group Guard</title>
+  <title>Alorhawa Group Guard — User Panel</title>
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS CDN -->
@@ -98,7 +98,7 @@
           <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
         </button>
 
-        <!-- 🌟 Header Mini Profile Avatar (Click to view full Profile) 🌟 -->
+        <!-- 🌟 Header Mini Profile Avatar 🌟 -->
         <button onclick="switchTabAndFullScreen('userProfile')" class="flex items-center p-0.5 rounded-xl hover:ring-2 hover:ring-brand-500 transition active:scale-95" title="My Profile">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xs font-bold overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm relative">
             <span id="headerAvatarFallback">U</span>
@@ -138,7 +138,6 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto p-3 space-y-1 text-xs">
-      <!-- 🌟 Dedicated Profile Menu Button 🌟 -->
       <button onclick="switchTabAndFullScreen('userProfile')" data-tab="userProfile" class="side-nav-btn w-full p-2.5 rounded-xl text-left font-medium flex items-center justify-between transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60">
         <span class="flex items-center gap-2.5"><i data-lucide="user" class="w-4 h-4 text-brand-500"></i><span>আমার প্রোফাইল (My Profile)</span></span>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-50"></i>
@@ -209,7 +208,6 @@
               <select id="activeGroupSelector" onchange="switchActiveGroup(this.value)" class="text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-slate-900 dark:text-white max-w-[200px] sm:max-w-xs truncate cursor-pointer">
                 <option value="">গ্রুপ নির্বাচন করুন</option>
               </select>
-              <!-- Live Admin Badge -->
               <span id="botAdminStatusBadge" class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Ready</span>
             </div>
             <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400 font-mono">
@@ -249,11 +247,10 @@
       </div>
     </div>
 
-    <!-- ==================== TAB: 👤 DEDICATED USER PROFILE TAB ==================== -->
+    <!-- ==================== TAB: USER PROFILE ==================== -->
     <div id="tabContent-userProfile" class="tab-pane hidden space-y-4">
       <div class="glass-card rounded-2xl p-6 shadow-sm space-y-6">
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-          <!-- Large Profile Picture -->
           <div class="relative flex-shrink-0">
             <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-3xl font-bold shadow-xl overflow-hidden border-4 border-white dark:border-slate-800">
               <span id="tabUserAvatarFallback">U</span>
@@ -262,7 +259,6 @@
             <div class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900" title="Online"></div>
           </div>
 
-          <!-- User Details -->
           <div class="flex-1 space-y-1.5">
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <h2 id="tabUserDisplayName" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">Telegram Member</h2>
@@ -696,7 +692,6 @@
   <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
     const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
-    // 🌟 সরাসরি টোকেন থেকে বটের আইডি এক্সট্রাক্ট
     const BOT_ID = DEFAULT_BOT_TOKEN.split(':')[0];
     const WORKER_URL = "https://groupguard.myalorhawa.workers.dev";
 
@@ -718,21 +713,12 @@
       initButtonEditors(['warnButtons', 'welcomeButtons', 'goodbyeButtons']);
       initUserProfile();
 
-      // ইউজার ভিত্তিক সংরক্ষিত গ্রুপ লোড
-      loadUserScopedGroups();
-
       try {
         const meRes = await callTelegramApi('getMe');
         AppState.botInfo = meRes.result;
 
-        const lastActive = localStorage.getItem(`agg_last_active_group_${getUserStorageKey()}`);
-        if (lastActive && AppState.savedGroups.some(g => String(g.id) === String(lastActive))) {
-          switchActiveGroup(lastActive);
-        } else if (AppState.savedGroups.length > 0) {
-          switchActiveGroup(AppState.savedGroups[0].id);
-        } else {
-          autoDiscoverGroups(true);
-        }
+        // ইউজারের নিজস্ব ভ্যালিড গ্রুপগুলো যাচাই করে লোড
+        await loadAndValidateUserGroups();
 
         startLivePolling();
       } catch (err) {
@@ -741,23 +727,51 @@
     });
 
     function getUserStorageKey() {
-      return (AppState.userProfile && AppState.userProfile.id) ? String(AppState.userProfile.id) : 'default_user';
+      return (AppState.userProfile && AppState.userProfile.id && AppState.userProfile.id !== 'Guest') 
+        ? String(AppState.userProfile.id) 
+        : 'guest_user';
     }
 
-    function loadUserScopedGroups() {
+    // 🌟 ইউজারের অনুমোদিত গ্রুপ লোড ও অননুমোদিত গ্রুপ সম্পূর্ণ ডিলিট ইঞ্জিন 🌟
+    async function loadAndValidateUserGroups() {
       const key = `agg_saved_groups_${getUserStorageKey()}`;
       let groups = JSON.parse(localStorage.getItem(key) || '[]');
-      if (groups.length === 0) {
-        const old = JSON.parse(localStorage.getItem('agg_saved_groups') || '[]');
-        if (old.length > 0) groups = old;
+      
+      const currentUid = AppState.userProfile?.id;
+      const validGroups = [];
+
+      if (currentUid && currentUid !== 'Guest') {
+        for (const g of groups) {
+          const perms = await fetchUserTelegramPermissions(g.id, currentUid);
+          if (perms.isAdmin) {
+            validGroups.push(g);
+          }
+        }
       }
-      AppState.savedGroups = groups;
+
+      AppState.savedGroups = validGroups;
+      localStorage.setItem(key, JSON.stringify(validGroups));
+
+      renderAllGroupsTab();
+      renderGroupSelectorDropdown();
+
+      if (validGroups.length > 0) {
+        const lastActive = localStorage.getItem(`agg_last_active_group_${getUserStorageKey()}`);
+        if (lastActive && validGroups.some(g => String(g.id) === String(lastActive))) {
+          switchActiveGroup(lastActive);
+        } else {
+          switchActiveGroup(validGroups[0].id);
+        }
+      } else {
+        AppState.activeChatId = '';
+        renderActiveGroupHeader("0", false, { isAdmin: false });
+        document.getElementById('noGroupActiveNotice').classList.remove('hidden');
+      }
     }
 
     function saveUserScopedGroups() {
       const key = `agg_saved_groups_${getUserStorageKey()}`;
       localStorage.setItem(key, JSON.stringify(AppState.savedGroups));
-      localStorage.setItem('agg_saved_groups', JSON.stringify(AppState.savedGroups));
     }
 
     async function callTelegramApi(method, params = {}) {
@@ -791,10 +805,8 @@
           const status = (m.status || '').toLowerCase();
 
           if (status === 'creator') {
-            // গ্রুপের মালিক (Owner) -> সব পারমিশন ফুল এলাউড
             return { isOwner: true, canDelete: true, canRestrict: true, canChangeInfo: true, isAdmin: true };
           } else if (status === 'administrator') {
-            // গ্রুপের এডমিন -> ওনার যে যে পারমিশন দিয়েছেন শুধু সেটাই এলাউড
             return {
               isOwner: false,
               canDelete: !!m.can_delete_messages,
@@ -814,10 +826,30 @@
       if (spinner) spinner.classList.add('animate-spin');
 
       try {
+        // ১) পারমিশন যাচাই
+        AppState.userPermissions = await fetchUserTelegramPermissions(AppState.activeChatId, AppState.userProfile?.id);
+
+        // ২) ইউজার যদি এই গ্রুপের এডমিন না হয়, তবে ড্রপডাউন ও স্ক্রিন থেকে গ্রুপ সম্পূর্ণ মুছে ফেলা
+        if (!AppState.userPermissions.isAdmin) {
+          AppState.savedGroups = AppState.savedGroups.filter(g => String(g.id) !== String(AppState.activeChatId));
+          saveUserScopedGroups();
+          renderAllGroupsTab();
+          renderGroupSelectorDropdown();
+          
+          if (AppState.savedGroups.length > 0) {
+            await switchActiveGroup(AppState.savedGroups[0].id);
+          } else {
+            AppState.activeChatId = '';
+            renderActiveGroupHeader("0", false, { isAdmin: false });
+            document.getElementById('noGroupActiveNotice').classList.remove('hidden');
+          }
+          if (showToastMsg) showToast("অননুমোদিত গ্রুপ সরানো হয়েছে", "info");
+          return;
+        }
+
         const chatRes = await callTelegramApi('getChat', { chat_id: AppState.activeChatId });
         AppState.activeChatInfo = chatRes.result;
 
-        // বট এডমিন চেক
         const memRes = await callTelegramApi('getChatMember', {
           chat_id: AppState.activeChatId,
           user_id: BOT_ID
@@ -832,13 +864,10 @@
         const status = (memRes.result?.status || '').toLowerCase();
         const isBotAdmin = status === 'administrator' || status === 'creator' || memRes.result?.can_delete_messages === true || memRes.result?.can_restrict_members === true;
 
-        // ইউজারের টেলিগ্রামের আসল ক্ষমতা (Owner / Admin Rights) রিড করা
-        AppState.userPermissions = await fetchUserTelegramPermissions(AppState.activeChatId, AppState.userProfile?.id);
-
         renderActiveGroupHeader(memberCount, isBotAdmin, AppState.userPermissions);
-        if (showToastMsg) showToast("গ্রুপ তথ্য ও পারমিশন রিফ্রেশ হয়েছে!", "success");
+        if (showToastMsg) showToast("গ্রুপ তথ্য রিফ্রেশ হয়েছে!", "success");
 
-        if (isBotAdmin && AppState.userPermissions.isAdmin) {
+        if (isBotAdmin) {
           syncGroupWithWorker(chatRes.result, isBotAdmin);
         }
       } catch (err) {
@@ -850,15 +879,15 @@
 
     function renderActiveGroupHeader(memberCount, isBotAdmin, perms) {
       const c = AppState.activeChatInfo || {};
-      document.getElementById('groupIdDisplay').innerText = `ID: ${c.id || AppState.activeChatId}`;
+      document.getElementById('groupIdDisplay').innerText = `ID: ${c.id || AppState.activeChatId || '—'}`;
       document.getElementById('statMemberCount').innerText = memberCount;
       document.getElementById('statTotalManagedGroups').innerText = AppState.savedGroups.length;
       document.getElementById('sideGroupCountBadge').innerText = AppState.savedGroups.length;
 
       const badge = document.getElementById('botAdminStatusBadge');
-      if (!perms.isAdmin) {
-        badge.className = "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300";
-        badge.innerText = "NOT YOUR GROUP";
+      if (!perms || !perms.isAdmin || !AppState.activeChatId) {
+        badge.className = "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400";
+        badge.innerText = "NO GROUP";
       } else if (!isBotAdmin) {
         badge.className = "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300";
         badge.innerText = "BOT NOT ADMIN";
@@ -867,7 +896,7 @@
         badge.innerText = "OWNER (FULL ACCESS)";
       } else {
         badge.className = "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-300";
-        badge.innerText = "ADMIN (LIMITED)";
+        badge.innerText = "ADMIN ACTIVE";
       }
     }
 
@@ -914,7 +943,6 @@
       registerUserToWorker(profile);
     }
 
-    // ইউজার প্যানেলে প্রবেশ করলেই ইউজারের তথ্য Worker এ রেজিস্টার
     async function registerUserToWorker(profile) {
       if (!profile || !profile.id || profile.id === "Guest") return;
       try {
@@ -1012,9 +1040,7 @@
         localStorage.setItem('agg_user_profile', JSON.stringify(profile));
         renderUserProfile(profile);
         registerUserToWorker(profile);
-        loadUserScopedGroups();
-        renderAllGroupsTab();
-        renderGroupSelectorDropdown();
+        await loadAndValidateUserGroups();
         closeModal();
         showToast("প্রোফাইল লোড ও সিঙ্ক হয়েছে!", "success");
       } catch (err) {
@@ -1022,7 +1048,7 @@
       }
     }
 
-    // --- 🌟 EASY BUTTON EDITOR (নাম, লিংক ও কালার সহজে সেট করুন) 🌟 ---
+    // --- 🌟 EASY BUTTON EDITOR 🌟 ---
     const BTN_COLOR_OPTIONS = [
       { key: '',      label: 'সাধারণ', dot: 'bg-slate-400',   fill: 'bg-slate-500 border-slate-500 text-white' },
       { key: 'red',   label: 'লাল',    dot: 'bg-red-500',     fill: 'bg-red-500 border-red-500 text-white' },
@@ -1255,13 +1281,13 @@
         if (AppState.savedGroups.length > 0) switchActiveGroup(AppState.savedGroups[0].id);
         else {
           AppState.activeChatId = '';
+          renderActiveGroupHeader("0", false, { isAdmin: false });
           document.getElementById('noGroupActiveNotice').classList.remove('hidden');
         }
       }
       showToast("Group removed from list", "info");
     }
 
-    // 🌟 অটো স্ক্যানে শুধু ইউজারের নিজস্ব এডমিন থাকা গ্রুপগুলো যোগ হবে
     async function autoDiscoverGroups(silent = false) {
       if (!silent) showToast("Scanning updates for your groups...", "info");
       try {
@@ -1274,7 +1300,7 @@
           if (m && m.chat && (m.chat.type === 'group' || m.chat.type === 'supergroup')) {
             const gid = String(m.chat.id);
             if (!AppState.savedGroups.some(g => String(g.id) === gid)) {
-              let isPermitted = true;
+              let isPermitted = false;
               if (currentUserId && currentUserId !== 'Guest') {
                 const p = await fetchUserTelegramPermissions(gid, currentUserId);
                 isPermitted = p.isAdmin;
@@ -1324,7 +1350,6 @@
       lucide.createIcons();
     }
 
-    // 🌟 অন্যের গ্রুপ এড করা ১০০% ব্লক করার ভ্যালিডেশন
     async function submitAddGroupFromModal() {
       const input = document.getElementById('modalChatIdInput').value.trim();
       if (!input) return showToast("Chat ID লিখুন", "warning");
@@ -1333,7 +1358,6 @@
         const chatRes = await callTelegramApi('getChat', { chat_id: input });
         const chat = chatRes.result;
 
-        // কঠোর যাচাই: ইউজার কি এই গ্রুপের Owner বা Admin?
         if (AppState.userProfile && AppState.userProfile.id && AppState.userProfile.id !== 'Guest') {
           const perms = await fetchUserTelegramPermissions(chat.id, AppState.userProfile.id);
           if (!perms.isAdmin) {
@@ -1412,7 +1436,7 @@
       };
     }
 
-    // --- UI CONFIG LOADERS & SAVERS (WITH PERMISSION CHECKS) ---
+    // --- UI CONFIG LOADERS & SAVERS ---
     function loadRulesForActiveGroup() {
       const rules = getRulesForGroup(AppState.activeChatId);
       document.getElementById('ruleBlockLinks').checked = !!rules.blockLinks;
@@ -1424,7 +1448,6 @@
     }
 
     function saveRuleForActiveGroup(name, val) {
-      // পারমিশন ভেরিফিকেশন (Delete Messages অনুমতি আছে কি না)
       if (!AppState.userPermissions.isOwner && !AppState.userPermissions.canDelete) {
         showToast("⚠️ পারমিশন নেই: গ্রুপের ওনার আপনাকে রুলস পরিবর্তনের অনুমতি দেননি!", "error");
         loadRulesForActiveGroup();
@@ -1708,13 +1731,12 @@
       showToast("Live stream cleared", "info");
     }
 
-    // --- 🌟 PUNISH ACTIONS (WITH STRICT ADMIN RIGHT CHECK) 🌟 ---
+    // --- 🌟 PUNISH ACTIONS 🌟 ---
     async function punishUser(action, seconds) {
       const uid = document.getElementById('modUserIdInput').value.trim();
       if (!uid) return showToast("User ID লিখুন", "warning");
       if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
 
-      // ওনার বা ক্যান_রেসট্রিক্ট_মেম্বারস পারমিশন চেক
       if (!AppState.userPermissions.isOwner && !AppState.userPermissions.canRestrict) {
         return showToast("⚠️ পারমিশন নেই: গ্রুপের ওনার আপনাকে মেম্বার মিউট বা ব্যান করার ক্ষমতা দেননি!", "error");
       }
@@ -1752,7 +1774,6 @@
     async function applyServerLock(type) {
       if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
 
-      // ওনার বা ক্যান_চেঞ্জ_ইনফো পারমিশন চেক
       if (!AppState.userPermissions.isOwner && !AppState.userPermissions.canChangeInfo) {
         return showToast("⚠️ পারমিশন নেই: গ্রুপের ওনার আপনাকে পারমিশন পরিবর্তনের ক্ষমতা দেননি!", "error");
       }
