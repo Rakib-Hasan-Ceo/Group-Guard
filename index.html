@@ -1,13 +1,14 @@
-
-
 <!DOCTYPE html>
 <html lang="bn" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Alorhawa Group Guard</title>
+  <title>Alorhawa Group Guard — User Panel</title>
+  <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -73,6 +74,7 @@
   <!-- ==================== TOP HEADER ==================== -->
   <header class="sticky top-0 z-40 w-full glass-header">
     <div class="w-full px-3.5 sm:px-6 h-14 flex items-center justify-between">
+      <!-- Left: Menu + Title -->
       <div class="flex items-center gap-2.5">
         <button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center active:scale-95" title="Menu">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -86,6 +88,7 @@
         </div>
       </div>
 
+      <!-- Right: Language, Theme & Small Profile Avatar -->
       <div class="flex items-center gap-2">
         <button onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center gap-1 transition active:scale-95">
           <span id="langLabel">EN</span>
@@ -95,6 +98,7 @@
           <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
         </button>
 
+        <!-- 🌟 Header Mini Profile Avatar 🌟 -->
         <button onclick="switchTabAndFullScreen('userProfile')" class="flex items-center p-0.5 rounded-xl hover:ring-2 hover:ring-brand-500 transition active:scale-95" title="My Profile">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xs font-bold overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm relative">
             <span id="headerAvatarFallback">U</span>
@@ -1191,15 +1195,16 @@
           const st = { 
             red: 'danger', 
             danger: 'danger', 
+            লাল: 'danger',
             blue: 'primary', 
             primary: 'primary', 
+            নীল: 'primary',
             green: 'success', 
-            success: 'success' 
-          }[colorKey];
+            success: 'success',
+            সবুজ: 'success'
+          }[colorKey] || 'primary';
           
-          if (st) {
-            btn.style = st;
-          }
+          btn.style = st;
           rows.push([btn]);
         }
       });
@@ -1403,10 +1408,11 @@
     function getWarningsConfig(chatId) {
       const saved = localStorage.getItem(`agg_warnings_${chatId}`);
       if (saved) return JSON.parse(saved);
+      const safeId = (chatId || '').replace('-', 'm');
       return {
         enabled: true,
         autoDeleteSeconds: 10,
-        buttons: "📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel | red\nমালিকের আইডি | https://t.me/mychannel | blue",
+        buttons: `📜 গ্রুপের নিয়ম দেখুন | https://t.me/${AppState.botInfo?.username || 'SafeGroupRbot'}?start=rules_${safeId} | red\nমালিকের আইডি | https://t.me/mychannel | blue`,
         messages: {
           link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
           forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
