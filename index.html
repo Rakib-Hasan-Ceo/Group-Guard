@@ -209,6 +209,7 @@
               <select id="activeGroupSelector" onchange="switchActiveGroup(this.value)" class="text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-slate-900 dark:text-white max-w-[200px] sm:max-w-xs truncate cursor-pointer">
                 <option value="">গ্রুপ নির্বাচন করুন</option>
               </select>
+              <!-- Live Admin Badge -->
               <span id="botAdminStatusBadge" class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Ready</span>
             </div>
             <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400 font-mono">
@@ -668,17 +669,10 @@
     <!-- ==================== TAB: ALL MANAGED GROUPS ==================== -->
     <div id="tabContent-allGroups" class="tab-pane hidden space-y-4">
       <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i>
-            <span>All Your Saved Groups</span>
-          </h3>
-          <button onclick="autoDiscoverGroups()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white flex items-center gap-1">
-            <i data-lucide="scan-line" class="w-3.5 h-3.5"></i>
-            <span>Scan Bot Updates</span>
-          </button>
-        </div>
-        <p class="text-xs text-slate-500">যেকোনো গ্রুপে ক্লিক করে তাৎক্ষণিকভাবে সেটির রুলস ও মেম্বার নিয়ন্ত্রণ করুন।</p>
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i>
+          <span>All Your Saved Groups</span>
+        </h3>
         <div id="allGroupsCardsList" class="space-y-2 pt-2"></div>
       </div>
     </div>
@@ -701,7 +695,10 @@
 
   <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
-    const DEFAULT_BOT_TOKEN = "8842767848:AAGQ3GegHGrdk94uwi6n_ctaqPuUKExd41Y";
+    const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
+    // 🌟 সরাসরি টোকেন থেকে বটের আইডি এক্সট্রাক্ট (Not Admin গ্লিচ ফিক্স)
+    const BOT_ID = DEFAULT_BOT_TOKEN.split(':')[0]; // "8842767848"
+    const WORKER_URL = "https://safegroup.myalorhawa.workers.dev";
 
     const AppState = {
       token: DEFAULT_BOT_TOKEN,
@@ -748,11 +745,76 @@
           body: JSON.stringify(params)
         });
         const data = await res.json();
-        if (!data.ok) throw new Error(data.description || "API Request Failed");
         return data;
       } catch (err) {
         throw err;
       }
+    }
+
+    // --- 🌟 FIXED ADMIN CHECK ENGINE 🌟 ---
+    async function refreshActiveGroup(showToastMsg = false) {
+      if (!AppState.activeChatId) return;
+      const spinner = document.getElementById('refreshSpinner');
+      if (spinner) spinner.classList.add('animate-spin');
+
+      try {
+        const chatRes = await callTelegramApi('getChat', { chat_id: AppState.activeChatId });
+        AppState.activeChatInfo = chatRes.result;
+
+        // 👈 নির্ভরযোগ্য BOT_ID দিয়ে টেলিগ্রাম থেকে এডমিন চেক
+        const memRes = await callTelegramApi('getChatMember', {
+          chat_id: AppState.activeChatId,
+          user_id: BOT_ID
+        });
+
+        let memberCount = "500+";
+        try {
+          const cRes = await callTelegramApi('getChatMemberCount', { chat_id: AppState.activeChatId });
+          if (cRes.ok) memberCount = cRes.result;
+        } catch (e) {}
+
+        const status = (memRes.result?.status || '').toLowerCase();
+        const isAdmin = status === 'administrator' || status === 'creator' || memRes.result?.can_delete_messages === true || memRes.result?.can_restrict_members === true;
+
+        renderActiveGroupHeader(memberCount, isAdmin);
+        if (showToastMsg) showToast("গ্রুপ তথ্য রিফ্রেশ হয়েছে!", "success");
+
+        syncGroupWithWorker(chatRes.result, isAdmin);
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      } finally {
+        if (spinner) spinner.classList.remove('animate-spin');
+      }
+    }
+
+    function renderActiveGroupHeader(memberCount, isAdmin) {
+      const c = AppState.activeChatInfo || {};
+      document.getElementById('groupIdDisplay').innerText = `ID: ${c.id || AppState.activeChatId}`;
+      document.getElementById('statMemberCount').innerText = memberCount;
+      document.getElementById('statTotalManagedGroups').innerText = AppState.savedGroups.length;
+      document.getElementById('sideGroupCountBadge').innerText = AppState.savedGroups.length;
+
+      const badge = document.getElementById('botAdminStatusBadge');
+      if (isAdmin) {
+        badge.className = "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300";
+        badge.innerText = "ADMIN ACTIVE";
+      } else {
+        badge.className = "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300";
+        badge.innerText = "NOT ADMIN";
+      }
+    }
+
+    async function syncGroupWithWorker(chat, isAdmin) {
+      try {
+        await fetch(`${WORKER_URL}/api/rules`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chatId: AppState.activeChatId,
+            rules: getRulesForGroup(AppState.activeChatId)
+          })
+        });
+      } catch (e) {}
     }
 
     // --- 🌟 USER PROFILE DETECTION & RENDERER 🌟 ---
@@ -783,7 +845,6 @@
     }
 
     function renderUserProfile(p) {
-      // 1. Header Mini Avatar
       const hImg = document.getElementById('headerAvatarImg');
       const hFallback = document.getElementById('headerAvatarFallback');
       if (p.photoUrl) {
@@ -796,7 +857,6 @@
         hFallback.innerText = (p.name || 'U').charAt(0).toUpperCase();
       }
 
-      // 2. Full Profile Tab UI
       document.getElementById('tabUserDisplayName').innerText = p.name || 'Telegram Member';
       document.getElementById('tabUserUsername').innerText = p.username || 'No username';
       document.getElementById('tabUserId').innerText = p.id || '—';
@@ -899,50 +959,6 @@
       loadRulesForActiveGroup();
       loadWarningsForActiveGroup();
       loadWelcomeConfigForActiveGroup();
-    }
-
-    async function refreshActiveGroup(showToastMsg = false) {
-      if (!AppState.activeChatId) return;
-      const spinner = document.getElementById('refreshSpinner');
-      if (spinner) spinner.classList.add('animate-spin');
-
-      try {
-        const chatRes = await callTelegramApi('getChat', { chat_id: AppState.activeChatId });
-        AppState.activeChatInfo = chatRes.result;
-
-        const memRes = await callTelegramApi('getChatMember', { chat_id: AppState.activeChatId, user_id: AppState.botInfo.id });
-        AppState.activeAdminMember = memRes.result;
-
-        let memberCount = "—";
-        try {
-          const cRes = await callTelegramApi('getChatMemberCount', { chat_id: AppState.activeChatId });
-          memberCount = cRes.result;
-        } catch (e) {}
-
-        renderActiveGroupHeader(memberCount);
-        if (showToastMsg) showToast("গ্রুপ রিফ্রেশ সম্পন্ন!", "success");
-      } catch (err) {
-        showToast(err.message, "error");
-      } finally {
-        if (spinner) spinner.classList.remove('animate-spin');
-      }
-    }
-
-    function renderActiveGroupHeader(memberCount) {
-      const c = AppState.activeChatInfo || {};
-      const mem = AppState.activeAdminMember || {};
-
-      document.getElementById('groupIdDisplay').innerText = `ID: ${c.id || AppState.activeChatId}`;
-      document.getElementById('statMemberCount').innerText = memberCount;
-      document.getElementById('statTotalManagedGroups').innerText = AppState.savedGroups.length;
-      document.getElementById('sideGroupCountBadge').innerText = AppState.savedGroups.length;
-
-      const isAdmin = mem.status === 'administrator' || mem.status === 'creator';
-      const badge = document.getElementById('botAdminStatusBadge');
-      badge.innerText = isAdmin ? "Admin Active" : "Not Admin";
-      badge.className = isAdmin 
-        ? "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300"
-        : "text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-300";
     }
 
     function renderGroupSelectorDropdown() {
@@ -1152,6 +1168,7 @@
       rules[name] = val;
       localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
       showToast("Rule updated for active group", "info");
+      syncGroupWithWorker({}, true);
     }
 
     function addBadWordToActiveGroup() {
