@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Alorhawa Group Guard — User Panel</title>
+  <title>Alorhawa Group Guard</title>
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Tailwind CSS CDN -->
@@ -74,7 +74,6 @@
   <!-- ==================== TOP HEADER ==================== -->
   <header class="sticky top-0 z-40 w-full glass-header">
     <div class="w-full px-3.5 sm:px-6 h-14 flex items-center justify-between">
-      <!-- Left: Menu + Title -->
       <div class="flex items-center gap-2.5">
         <button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center active:scale-95" title="Menu">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -88,7 +87,6 @@
         </div>
       </div>
 
-      <!-- Right: Language, Theme & Small Profile Avatar -->
       <div class="flex items-center gap-2">
         <button onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center gap-1 transition active:scale-95">
           <span id="langLabel">EN</span>
@@ -98,7 +96,6 @@
           <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
         </button>
 
-        <!-- 🌟 Header Mini Profile Avatar 🌟 -->
         <button onclick="switchTabAndFullScreen('userProfile')" class="flex items-center p-0.5 rounded-xl hover:ring-2 hover:ring-brand-500 transition active:scale-95" title="My Profile">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xs font-bold overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm relative">
             <span id="headerAvatarFallback">U</span>
@@ -213,7 +210,7 @@
             <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-400 font-mono">
               <span id="groupIdDisplay" class="text-slate-800 dark:text-slate-200">ID: —</span>
               <button onclick="copyText(AppState.activeChatId, 'Group ID')" class="text-slate-400 hover:text-slate-600 p-0.5" title="Copy ID">
-                <i data-lucide="copy" class="w-3 h-3"></i>
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
@@ -470,8 +467,8 @@
               <span class="text-[11px] text-slate-500">যাতে বটের মেসেজে গ্রুপ ভরে না যায়।</span>
             </div>
             <select id="warnAutoDeleteSeconds" class="text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 cursor-pointer">
-              <option value="5">৫ সেকেন্ড পর (5s)</option>
-              <option value="10" selected>১০ সেকেন্ড পর (10s)</option>
+              <option value="5" selected>৫ সেকেন্ড পর (5s)</option>
+              <option value="10">১০ সেকেন্ড পর (10s)</option>
               <option value="15">১৫ সেকেন্ড পর (15s)</option>
               <option value="30">৩০ সেকেন্ড পর (30s)</option>
               <option value="60">১ মিনিট পর (60s)</option>
@@ -481,7 +478,7 @@
 
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
             <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (কালার সিলেক্ট করুন):</label>
-            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel | red" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/GroupxGuardBot | red" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
 
@@ -675,15 +672,27 @@
     <!-- ==================== TAB: RULES ==================== -->
     <div id="tabContent-rulesGen" class="tab-pane hidden space-y-4">
       <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
-        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <i data-lucide="file-text" class="w-4 h-4"></i>
-          <span>Group Rules Notice</span>
-        </h3>
-        <textarea id="rulesNoticeBox" rows="6" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-mono"></textarea>
-        <button onclick="sendRulesToActiveGroup()" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold flex items-center gap-1.5">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i>
-          <span>Send Notice to Active Group</span>
-        </button>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i>
+            <span>Group Rules Notice (বটের ইনবক্সের জন্য রুলস সেভ করুন)</span>
+          </h3>
+        </div>
+        <p class="text-xs text-slate-500">এখানে আপনার গ্রুপের সব নিয়ম লিখুন। গ্রুপে কেউ "📜 গ্রুপের নিয়ম দেখুন" বাটনে চাপ দিলে বটের ইনবক্সে এই লেখাটিই চলে যাবে।</p>
+        
+        <textarea id="rulesNoticeBox" rows="8" placeholder="১. গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ।&#10;২. অন্য চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ।&#10;৩. অশালীন বা আপত্তিকর ভাষা ব্যবহার করা যাবে না।&#10;৪. গ্রুপের সকল নিয়ম মেনে চলুন।" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-sans text-slate-900 dark:text-slate-100"></textarea>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+          <button onclick="saveGroupRulesToBot()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+            <span>💾 Save Rules (বটে রুলস সেভ করুন)</span>
+          </button>
+          
+          <button onclick="sendRulesToActiveGroup()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>📢 Send Notice to Group</span>
+          </button>
+        </div>
       </div>
     </div>
   </main>
@@ -692,6 +701,7 @@
   <script>
     const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
     const BOT_ID = DEFAULT_BOT_TOKEN.split(':')[0];
+    const BOT_USERNAME = "GroupxGuardBot"; // 👈 আপনার বটের আসল ইউজারনেম
     const WORKER_URL = "https://groupguard.myalorhawa.workers.dev";
 
     const AppState = {
@@ -699,7 +709,7 @@
       activeChatId: '',
       savedGroups: [],
       userProfile: JSON.parse(localStorage.getItem('agg_user_profile') || 'null'),
-      botInfo: null,
+      botInfo: { username: BOT_USERNAME },
       activeChatInfo: null,
       userPermissions: { isOwner: false, canDelete: false, canRestrict: false, canChangeInfo: false, isAdmin: false },
       stats: { deleted: 0, warnings: 0 },
@@ -714,7 +724,9 @@
 
       try {
         const meRes = await callTelegramApi('getMe');
-        AppState.botInfo = meRes.result;
+        if (meRes.ok && meRes.result) {
+          AppState.botInfo = meRes.result;
+        }
 
         await loadAndValidateUserGroups();
         startLivePolling();
@@ -1055,7 +1067,7 @@
         const parts = line.split('|').map(p => p.trim());
         if (parts.length >= 2) {
           const c = (parts[2] || '').toLowerCase();
-          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green', 'danger', 'primary', 'success'].includes(c) ? (c === 'danger' ? 'red' : (c === 'primary' ? 'blue' : (c === 'success' ? 'green' : c))) : '' });
+          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green', 'danger', 'primary', 'success', 'লাল', 'নীল', 'সবুজ'].includes(c) ? (['red', 'danger', 'লাল'].includes(c) ? 'red' : (['blue', 'primary', 'নীল'].includes(c) ? 'blue' : 'green')) : 'red' });
         }
       });
       return rows;
@@ -1110,7 +1122,7 @@
         const urlIn = document.createElement('input');
         urlIn.type = 'text';
         urlIn.value = r.url;
-        urlIn.placeholder = 'লিংক (যেমন: https://t.me/mychannel)';
+        urlIn.placeholder = 'লিংক (যেমন: https://t.me/' + BOT_USERNAME + ')';
         urlIn.className = inputCls + ' font-mono';
         urlIn.addEventListener('input', () => { r.url = urlIn.value; syncButtonTextarea(id); });
         urlIn.addEventListener('blur', () => {
@@ -1200,9 +1212,9 @@
             primary: 'primary', 
             নীল: 'primary',
             green: 'success', 
-            success: 'success',
-            সবুজ: 'success'
-          }[colorKey] || 'primary';
+            success: 'success', 
+            সবুজ: 'success' 
+          }[colorKey] || 'danger';
           
           btn.style = st;
           rows.push([btn]);
@@ -1401,7 +1413,8 @@
       if (saved) return JSON.parse(saved);
       return {
         blockLinks: true, blockForwards: true, blockMedia: false,
-        blockStickers: false, blockDocs: false, badWords: ['গালি১', 'অশালীন২', 'scam']
+        blockStickers: false, blockDocs: false, badWords: ['গালি১', 'অশালীন২', 'scam'],
+        noticeText: "১. গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ।\n২. অন্য চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ।\n৩. অশালীন ভাষা বা গালিগালাজ ব্যবহার নিষেধ।\n৪. কোনো প্রকার স্প্যামিং করা যাবে না।"
       };
     }
 
@@ -1411,8 +1424,8 @@
       const safeId = (chatId || '').replace('-', 'm');
       return {
         enabled: true,
-        autoDeleteSeconds: 10,
-        buttons: `📜 গ্রুপের নিয়ম দেখুন | https://t.me/${AppState.botInfo?.username || 'SafeGroupRbot'}?start=rules_${safeId} | red\nমালিকের আইডি | https://t.me/mychannel | blue`,
+        autoDeleteSeconds: 5,
+        buttons: `📜 গ্রুপের নিয়ম দেখুন | https://t.me/${BOT_USERNAME}?start=rules_${safeId} | red`,
         messages: {
           link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
           forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
@@ -1445,6 +1458,7 @@
       document.getElementById('ruleBlockMedia').checked = !!rules.blockMedia;
       document.getElementById('ruleBlockStickers').checked = !!rules.blockStickers;
       document.getElementById('ruleBlockDocs').checked = !!rules.blockDocs;
+      document.getElementById('rulesNoticeBox').value = rules.noticeText || '';
       renderBadWordsList(rules.badWords);
     }
 
@@ -1459,6 +1473,48 @@
       localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
       showToast("Rule updated for active group", "info");
       syncGroupWithWorker({}, true);
+    }
+
+    function saveGroupRulesToBot() {
+      if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
+      if (!AppState.userPermissions.isOwner && !AppState.userPermissions.canDelete) {
+        return showToast("⚠️ পারমিশন নেই: আপনার রুলস পরিবর্তনের ক্ষমতা নেই!", "error");
+      }
+
+      const text = document.getElementById('rulesNoticeBox').value.trim();
+      if (!text) return showToast("রুলস নোটিশের টেক্সট লিখুন", "warning");
+
+      const rules = getRulesForGroup(AppState.activeChatId);
+      rules.noticeText = text;
+      localStorage.setItem(`agg_rules_${AppState.activeChatId}`, JSON.stringify(rules));
+      syncGroupWithWorker({}, true);
+      showToast("✅ গ্রুপের রুলস বটের ইনবক্সের জন্য সফলভাবে সেভ হয়েছে!", "success");
+    }
+
+    async function sendRulesToActiveGroup() {
+      if (!AppState.activeChatId) return showToast("আগে একটি গ্রুপ সিলেক্ট করুন", "warning");
+      const text = document.getElementById('rulesNoticeBox').value.trim();
+      if (!text) return showToast("রুলস টেক্সট লিখুন", "warning");
+
+      const safeId = AppState.activeChatId.replace('-', 'm');
+      const markup = parseInlineButtons(`📜 বটের ইনবক্সে রুলস পড়ুন | https://t.me/${BOT_USERNAME}?start=rules_${safeId} | red`);
+
+      showToast("গ্রুপে রুলস পাঠানো হচ্ছে...", "info");
+      try {
+        const res = await callTelegramApi('sendMessage', {
+          chat_id: AppState.activeChatId,
+          text: `📜 <b>${escapeHtml(AppState.activeChatInfo?.title || "গ্রুপ")}-এর নিয়মাবলী:</b>\n\n${escapeHtml(text)}`,
+          parse_mode: 'HTML',
+          reply_markup: markup
+        });
+        if (res.ok) {
+          showToast("রুলস গ্রুপে সফলভাবে পাঠানো হয়েছে!", "success");
+        } else {
+          showToast("ব্যর্থ: " + res.description, "error");
+        }
+      } catch (e) {
+        showToast("মেসেজ পাঠানো যায়নি", "error");
+      }
     }
 
     function addBadWordToActiveGroup() {
@@ -1501,7 +1557,7 @@
     function loadWarningsForActiveGroup() {
       const cfg = getWarningsConfig(AppState.activeChatId);
       document.getElementById('warnSendEnabled').checked = !!cfg.enabled;
-      document.getElementById('warnAutoDeleteSeconds').value = String(cfg.autoDeleteSeconds ?? 10);
+      document.getElementById('warnAutoDeleteSeconds').value = String(cfg.autoDeleteSeconds ?? 5);
       document.getElementById('warnButtons').value = cfg.buttons || '';
       document.getElementById('warnMsgLink').value = cfg.messages.link || '';
       document.getElementById('warnMsgForward').value = cfg.messages.forward || '';
@@ -1655,7 +1711,7 @@
       let logTitle = "";
 
       if (rules.blockLinks) {
-        const hasLink = /(https?:\/\/|www\.|t\.me\/|telegram\.me\/)/i.test(text) || (m.entities || []).some(e => e.type === 'url' || e.type === 'text_link');
+        const hasLink = /(https?:\/\/|www\.|t\.me\/)/i.test(text) || (m.entities || []).some(e => e.type === 'url' || e.type === 'text_link');
         if (hasLink) { violationType = "link"; logTitle = "Link Sharing"; }
       }
       if (!violationType && rules.blockForwards && (m.forward_from || m.forward_from_chat || m.forward_date)) {
@@ -1666,6 +1722,9 @@
       }
       if (!violationType && rules.blockStickers && (m.sticker || m.animation)) {
         violationType = "sticker"; logTitle = "Sticker/GIF";
+      }
+      if (!violationType && rules.blockDocs && m.document) {
+        violationType = "doc"; logTitle = "File/Doc Attachment";
       }
       if (!violationType && text && (rules.badWords || []).some(w => text.toLowerCase().includes(w.toLowerCase()))) {
         violationType = "badword"; logTitle = "Bad Word";
@@ -1683,7 +1742,14 @@
             const rawTemplate = warnCfg.messages[violationType] || "⚠️ {user}, আপনার নিয়মভঙ্গকারী মেসেজটি মুছে ফেলা হয়েছে।";
             const userNameMention = from.id ? `<a href="tg://user?id=${from.id}">${escapeHtml(from.first_name || 'Member')}</a>` : escapeHtml(from.first_name || 'Member');
             const formattedMsg = rawTemplate.replace(/\{user\}/g, userNameMention);
-            const markup = parseInlineButtons(warnCfg.buttons);
+            
+            const safeChatId = chatId.replace('-', 'm');
+            let dynamicBtns = warnCfg.buttons;
+            if (!dynamicBtns || dynamicBtns.includes("mychannel")) {
+              dynamicBtns = `📜 গ্রুপের নিয়ম দেখুন | https://t.me/${BOT_USERNAME}?start=rules_${safeChatId} | red`;
+            }
+
+            const markup = parseInlineButtons(dynamicBtns);
 
             const sentRes = await callTelegramApi('sendMessage', {
               chat_id: chatId,
@@ -1696,7 +1762,7 @@
             AppState.stats.warnings++;
             document.getElementById('statWarningsCount').innerText = AppState.stats.warnings;
 
-            const autoDelSec = warnCfg.autoDeleteSeconds ?? 10;
+            const autoDelSec = (warnCfg.autoDeleteSeconds !== undefined && warnCfg.autoDeleteSeconds !== null) ? parseInt(warnCfg.autoDeleteSeconds) : 5;
             if (autoDelSec > 0 && sentRes.result?.message_id) {
               const botMsgId = sentRes.result.message_id;
               setTimeout(async () => {
