@@ -485,7 +485,7 @@
           </div>
 
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
-            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (নাম, লিংক ও কালার দিন):</label>
             <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel&#10;মালিকের আইডি | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
@@ -549,7 +549,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ইনলাইন বাটন যোগ করুন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ইনলাইন বাটন যোগ করুন (নাম, লিংক ও কালার দিন):</label>
             <textarea id="welcomeButtons" rows="2" placeholder="অফিসিয়াল চ্যানেল | https://t.me/mychannel&#10;হেল্প ডেস্ক | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
 
@@ -576,7 +576,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">আবার জয়েন করার বাটন (প্রতি লাইনে: বাটনের নাম | https://link.com):</label>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">আবার জয়েন করার বাটন (নাম, লিংক ও কালার দিন):</label>
             <textarea id="goodbyeButtons" rows="2" placeholder="আবার জয়েন করুন | https://t.me/mygroup&#10;মেইন চ্যানেল | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
@@ -698,7 +698,7 @@
     const DEFAULT_BOT_TOKEN = "8879383206:AAEE94yxg0j36baUs1B0VY_eis2SISp9YvU";
     // 🌟 সরাসরি টোকেন থেকে বটের আইডি এক্সট্রাক্ট (Not Admin গ্লিচ ফিক্স)
     const BOT_ID = DEFAULT_BOT_TOKEN.split(':')[0]; // "8842767848"
-    const WORKER_URL = "https://groupguard.myalorhawa.workers.dev";
+    const WORKER_URL = "https://groupxguard.myalorhawa.workers.dev";
 
     const AppState = {
       token: DEFAULT_BOT_TOKEN,
@@ -715,6 +715,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
+      initButtonEditors(['warnButtons', 'welcomeButtons', 'goodbyeButtons']);
       initUserProfile();
 
       try {
@@ -949,6 +950,153 @@
       }
     }
 
+    // --- 🌟 EASY BUTTON EDITOR (নাম, লিংক ও কালার সহজে সেট করুন) 🌟 ---
+    const BTN_COLOR_OPTIONS = [
+      { key: '',      label: 'সাধারণ', dot: 'bg-slate-400',   fill: 'bg-slate-500 border-slate-500 text-white' },
+      { key: 'red',   label: 'লাল',    dot: 'bg-red-500',     fill: 'bg-red-500 border-red-500 text-white' },
+      { key: 'blue',  label: 'নীল',    dot: 'bg-blue-500',    fill: 'bg-blue-500 border-blue-500 text-white' },
+      { key: 'green', label: 'সবুজ',   dot: 'bg-emerald-500', fill: 'bg-emerald-500 border-emerald-500 text-white' }
+    ];
+    const ButtonEditorState = {};
+
+    function parseButtonRows(text) {
+      const rows = [];
+      (text || '').split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+        const parts = line.split('|').map(p => p.trim());
+        if (parts.length >= 2) {
+          const c = (parts[2] || '').toLowerCase();
+          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green'].includes(c) ? c : '' });
+        }
+      });
+      return rows;
+    }
+
+    function serializeButtonRows(rows) {
+      return rows
+        .filter(r => r.name.trim() && r.url.trim())
+        .map(r => `${r.name.trim().replace(/\|/g, '/')} | ${r.url.trim()}${r.color ? ' | ' + r.color : ''}`)
+        .join('\n');
+    }
+
+    function normalizeButtonUrl(u) {
+      u = (u || '').trim();
+      if (!u) return '';
+      if (/^https?:\/\//i.test(u)) return u;
+      if (u.startsWith('@')) return 'https://t.me/' + u.slice(1);
+      return 'https://' + u;
+    }
+
+    function syncButtonTextarea(id) {
+      const ta = document.getElementById(id);
+      if (ta) ta.value = serializeButtonRows(ButtonEditorState[id] || []);
+    }
+
+    function renderButtonEditor(id) {
+      const ta = document.getElementById(id);
+      if (!ta) return;
+      let box = document.getElementById(id + '_editor');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = id + '_editor';
+        box.className = 'space-y-2';
+        ta.classList.add('hidden');
+        ta.parentNode.insertBefore(box, ta.nextSibling);
+      }
+      const inputCls = 'w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-slate-100';
+      const rows = ButtonEditorState[id] || [];
+      box.innerHTML = '';
+
+      rows.forEach((r, idx) => {
+        const card = document.createElement('div');
+        card.className = 'p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 space-y-2';
+
+        const nameIn = document.createElement('input');
+        nameIn.type = 'text';
+        nameIn.value = r.name;
+        nameIn.placeholder = 'বাটনের নাম (যেমন: 📜 গ্রুপের নিয়ম)';
+        nameIn.className = inputCls;
+        nameIn.addEventListener('input', () => { r.name = nameIn.value; syncButtonTextarea(id); });
+
+        const urlIn = document.createElement('input');
+        urlIn.type = 'text';
+        urlIn.value = r.url;
+        urlIn.placeholder = 'লিংক (যেমন: https://t.me/mychannel)';
+        urlIn.className = inputCls + ' font-mono';
+        urlIn.addEventListener('input', () => { r.url = urlIn.value; syncButtonTextarea(id); });
+        urlIn.addEventListener('blur', () => {
+          const n = normalizeButtonUrl(urlIn.value);
+          urlIn.value = n;
+          r.url = n;
+          syncButtonTextarea(id);
+        });
+
+        const bottom = document.createElement('div');
+        bottom.className = 'flex items-center justify-between gap-2';
+
+        const colors = document.createElement('div');
+        colors.className = 'flex flex-wrap gap-1.5';
+        BTN_COLOR_OPTIONS.forEach(o => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          const active = r.color === o.key;
+          b.className = 'px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 border transition ' +
+            (active
+              ? o.fill
+              : 'border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300');
+          b.innerHTML = active
+            ? `<span>✔</span><span>${o.label}</span>`
+            : `<span class="w-2.5 h-2.5 rounded-full ${o.dot}"></span><span>${o.label}</span>`;
+          b.addEventListener('click', () => { r.color = o.key; syncButtonTextarea(id); renderButtonEditor(id); });
+          colors.appendChild(b);
+        });
+
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold text-red-500 border border-red-300 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/40 transition flex-shrink-0';
+        del.innerText = '🗑️ মুছুন';
+        del.addEventListener('click', () => {
+          ButtonEditorState[id].splice(idx, 1);
+          syncButtonTextarea(id);
+          renderButtonEditor(id);
+        });
+
+        bottom.appendChild(colors);
+        bottom.appendChild(del);
+        card.appendChild(nameIn);
+        card.appendChild(urlIn);
+        card.appendChild(bottom);
+        box.appendChild(card);
+      });
+
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'w-full py-2 rounded-xl border border-dashed border-slate-400 dark:border-slate-600 text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+      add.innerText = '➕ নতুন বাটন যোগ করুন';
+      add.addEventListener('click', () => {
+        (ButtonEditorState[id] = ButtonEditorState[id] || []).push({ name: '', url: '', color: '' });
+        renderButtonEditor(id);
+      });
+      box.appendChild(add);
+
+      const hint = document.createElement('p');
+      hint.className = 'text-[10px] text-slate-500';
+      hint.innerText = 'রঙিন বাটন শুধু আপডেট করা টেলিগ্রাম অ্যাপে দেখা যায়। "সাধারণ" মানে টেলিগ্রামের নিজস্ব ডিফল্ট রঙ।';
+      box.appendChild(hint);
+    }
+
+    function refreshButtonEditors() {
+      Object.keys(ButtonEditorState).forEach(id => {
+        const ta = document.getElementById(id);
+        ButtonEditorState[id] = parseButtonRows(ta ? ta.value : '');
+        renderButtonEditor(id);
+      });
+    }
+
+    function initButtonEditors(ids) {
+      ids.forEach(id => { ButtonEditorState[id] = []; });
+      refreshButtonEditors();
+    }
+
     function parseInlineButtons(btnText) {
       if (!btnText || !btnText.trim()) return undefined;
       const rows = [];
@@ -956,7 +1104,10 @@
       lines.forEach(line => {
         const parts = line.split('|').map(p => p.trim());
         if (parts.length >= 2 && /^https?:\/\//i.test(parts[1])) {
-          rows.push([{ text: parts[0], url: parts[1] }]);
+          const btn = { text: parts[0], url: parts[1] };
+          const st = { red: 'danger', blue: 'primary', green: 'success' }[(parts[2] || '').toLowerCase()];
+          if (st) btn.style = st;
+          rows.push([btn]);
         }
       });
       return rows.length > 0 ? { inline_keyboard: rows } : undefined;
@@ -1229,6 +1380,7 @@
       document.getElementById('warnMsgMedia').value = cfg.messages.media || '';
       document.getElementById('warnMsgSticker').value = cfg.messages.sticker || '';
       document.getElementById('warnMsgBadword').value = cfg.messages.badword || '';
+      refreshButtonEditors();
     }
 
     function saveAllWarningTexts() {
@@ -1255,6 +1407,7 @@
       document.getElementById('goodbyeEnabled').checked = !!cfg.goodbyeEnabled;
       document.getElementById('goodbyeText').value = cfg.goodbyeText || '';
       document.getElementById('goodbyeButtons').value = cfg.goodbyeButtons || '';
+      refreshButtonEditors();
     }
 
     function saveAllWelcomeConfig() {
