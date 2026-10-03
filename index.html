@@ -1,14 +1,13 @@
+
+
 <!DOCTYPE html>
 <html lang="bn" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Alorhawa Group Guard — User Panel</title>
-  <!-- Telegram Web App SDK -->
+  <title>Alorhawa Group Guard</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -74,7 +73,6 @@
   <!-- ==================== TOP HEADER ==================== -->
   <header class="sticky top-0 z-40 w-full glass-header">
     <div class="w-full px-3.5 sm:px-6 h-14 flex items-center justify-between">
-      <!-- Left: Menu + Title -->
       <div class="flex items-center gap-2.5">
         <button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center active:scale-95" title="Menu">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -88,7 +86,6 @@
         </div>
       </div>
 
-      <!-- Right: Language, Theme & Small Profile Avatar -->
       <div class="flex items-center gap-2">
         <button onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center gap-1 transition active:scale-95">
           <span id="langLabel">EN</span>
@@ -98,7 +95,6 @@
           <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
         </button>
 
-        <!-- 🌟 Header Mini Profile Avatar 🌟 -->
         <button onclick="switchTabAndFullScreen('userProfile')" class="flex items-center p-0.5 rounded-xl hover:ring-2 hover:ring-brand-500 transition active:scale-95" title="My Profile">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-telegram flex items-center justify-center text-white text-xs font-bold overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm relative">
             <span id="headerAvatarFallback">U</span>
@@ -231,7 +227,6 @@
         </div>
       </div>
 
-      <!-- Prominent Guidance Banner when no group is added -->
       <div id="noGroupActiveNotice" class="hidden mt-3 p-4 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-300 space-y-2">
         <div class="flex items-start gap-2">
           <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
@@ -353,7 +348,7 @@
         </label>
       </div>
 
-      <!-- Live Stream Card with Clear Stream Button -->
+      <!-- Live Stream Card -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -481,8 +476,8 @@
           </div>
 
           <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1">
-            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (নাম, লিংক ও কালার দিন):</label>
-            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel&#10;মালিকের আইডি | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <label class="block text-xs font-bold text-slate-900 dark:text-white">📜 সতর্কবার্তার নিচে রুলস/হেল্প বাটন (কালার সিলেক্ট করুন):</label>
+            <textarea id="warnButtons" rows="2" placeholder="📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel | red" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
 
@@ -546,7 +541,7 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ইনলাইন বাটন যোগ করুন (নাম, লিংক ও কালার দিন):</label>
-            <textarea id="welcomeButtons" rows="2" placeholder="অফিসিয়াল চ্যানেল | https://t.me/mychannel&#10;হেল্প ডেস্ক | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <textarea id="welcomeButtons" rows="2" placeholder="অফিসিয়াল চ্যানেল | https://t.me/mychannel | green" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
 
           <div class="flex items-center justify-between pt-1">
@@ -573,7 +568,7 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">আবার জয়েন করার বাটন (নাম, লিংক ও কালার দিন):</label>
-            <textarea id="goodbyeButtons" rows="2" placeholder="আবার জয়েন করুন | https://t.me/mygroup&#10;মেইন চ্যানেল | https://t.me/mychannel" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
+            <textarea id="goodbyeButtons" rows="2" placeholder="আবার জয়েন করুন | https://t.me/mygroup | blue" class="w-full p-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-xs font-mono"></textarea>
           </div>
         </div>
 
@@ -717,9 +712,7 @@
         const meRes = await callTelegramApi('getMe');
         AppState.botInfo = meRes.result;
 
-        // ইউজারের নিজস্ব ভ্যালিড গ্রুপগুলো যাচাই করে লোড
         await loadAndValidateUserGroups();
-
         startLivePolling();
       } catch (err) {
         showToast("Bot Auth Error: " + err.message, "error");
@@ -732,7 +725,6 @@
         : 'guest_user';
     }
 
-    // 🌟 ইউজারের অনুমোদিত গ্রুপ লোড ও অননুমোদিত গ্রুপ সম্পূর্ণ ডিলিট ইঞ্জিন 🌟
     async function loadAndValidateUserGroups() {
       const key = `agg_saved_groups_${getUserStorageKey()}`;
       let groups = JSON.parse(localStorage.getItem(key) || '[]');
@@ -789,7 +781,6 @@
       }
     }
 
-    // --- 🌟 TELEGRAM OWNER & ADMIN RIGHTS VERIFICATION ENGINE 🌟 ---
     async function fetchUserTelegramPermissions(chatId, userId) {
       const defaultPerms = { isOwner: false, canDelete: false, canRestrict: false, canChangeInfo: false, isAdmin: false };
       if (!userId || userId === 'Guest' || !chatId) return defaultPerms;
@@ -826,10 +817,8 @@
       if (spinner) spinner.classList.add('animate-spin');
 
       try {
-        // ১) পারমিশন যাচাই
         AppState.userPermissions = await fetchUserTelegramPermissions(AppState.activeChatId, AppState.userProfile?.id);
 
-        // ২) ইউজার যদি এই গ্রুপের এডমিন না হয়, তবে ড্রপডাউন ও স্ক্রিন থেকে গ্রুপ সম্পূর্ণ মুছে ফেলা
         if (!AppState.userPermissions.isAdmin) {
           AppState.savedGroups = AppState.savedGroups.filter(g => String(g.id) !== String(AppState.activeChatId));
           saveUserScopedGroups();
@@ -913,7 +902,6 @@
       } catch (e) {}
     }
 
-    // --- 🌟 USER PROFILE DETECTION & INSTANT REGISTRATION 🌟 ---
     function initUserProfile() {
       let profile = null;
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
@@ -1048,7 +1036,7 @@
       }
     }
 
-    // --- 🌟 EASY BUTTON EDITOR 🌟 ---
+    // --- 🌟 EASY COLORFUL BUTTON EDITOR 🌟 ---
     const BTN_COLOR_OPTIONS = [
       { key: '',      label: 'সাধারণ', dot: 'bg-slate-400',   fill: 'bg-slate-500 border-slate-500 text-white' },
       { key: 'red',   label: 'লাল',    dot: 'bg-red-500',     fill: 'bg-red-500 border-red-500 text-white' },
@@ -1063,7 +1051,7 @@
         const parts = line.split('|').map(p => p.trim());
         if (parts.length >= 2) {
           const c = (parts[2] || '').toLowerCase();
-          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green'].includes(c) ? c : '' });
+          rows.push({ name: parts[0], url: parts[1], color: ['red', 'blue', 'green', 'danger', 'primary', 'success'].includes(c) ? (c === 'danger' ? 'red' : (c === 'primary' ? 'blue' : (c === 'success' ? 'green' : c))) : '' });
         }
       });
       return rows;
@@ -1171,15 +1159,10 @@
       add.className = 'w-full py-2 rounded-xl border border-dashed border-slate-400 dark:border-slate-600 text-xs font-bold text-brand-600 dark:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
       add.innerText = '➕ নতুন বাটন যোগ করুন';
       add.addEventListener('click', () => {
-        (ButtonEditorState[id] = ButtonEditorState[id] || []).push({ name: '', url: '', color: '' });
+        (ButtonEditorState[id] = ButtonEditorState[id] || []).push({ name: '', url: '', color: 'red' });
         renderButtonEditor(id);
       });
       box.appendChild(add);
-
-      const hint = document.createElement('p');
-      hint.className = 'text-[10px] text-slate-500';
-      hint.innerText = 'রঙিন বাটন শুধু আপডেট করা টেলিগ্রাম অ্যাপে দেখা যায়। "সাধারণ" মানে টেলিগ্রামের নিজস্ব ডিফল্ট রঙ।';
-      box.appendChild(hint);
     }
 
     function refreshButtonEditors() {
@@ -1195,6 +1178,7 @@
       refreshButtonEditors();
     }
 
+    // 🌟 কালার স্টাইল সঠিকভাবে টেলিগ্রাম বাটনে পাঠানোর পার্সার 🌟
     function parseInlineButtons(btnText) {
       if (!btnText || !btnText.trim()) return undefined;
       const rows = [];
@@ -1203,8 +1187,19 @@
         const parts = line.split('|').map(p => p.trim());
         if (parts.length >= 2 && /^https?:\/\//i.test(parts[1])) {
           const btn = { text: parts[0], url: parts[1] };
-          const st = { red: 'danger', blue: 'primary', green: 'success' }[(parts[2] || '').toLowerCase()];
-          if (st) btn.style = st;
+          const colorKey = (parts[2] || '').toLowerCase();
+          const st = { 
+            red: 'danger', 
+            danger: 'danger', 
+            blue: 'primary', 
+            primary: 'primary', 
+            green: 'success', 
+            success: 'success' 
+          }[colorKey];
+          
+          if (st) {
+            btn.style = st;
+          }
           rows.push([btn]);
         }
       });
@@ -1411,7 +1406,7 @@
       return {
         enabled: true,
         autoDeleteSeconds: 10,
-        buttons: "📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel\nমালিকের আইডি | https://t.me/mychannel",
+        buttons: "📜 গ্রুপের নিয়ম দেখুন | https://t.me/mychannel | red\nমালিকের আইডি | https://t.me/mychannel | blue",
         messages: {
           link: "⚠️ {user}, এই গ্রুপে কোনো প্রকার লিংক শেয়ার করা সম্পূর্ণ নিষেধ! আপনার লিংকটি মুছে দেওয়া হয়েছে।",
           forward: "⚠️ {user}, এই গ্রুপে অন্য কোনো চ্যানেল বা গ্রুপ থেকে মেসেজ ফরওয়ার্ড করা নিষেধ!",
@@ -1428,11 +1423,11 @@
       return {
         welcomeEnabled: true,
         welcomeText: "🎉 স্বাগতম {user} আমাদের {group} গ্রুপে!\nনিয়ম মেনে গ্রুপে সক্রিয় থাকুন।",
-        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel\nহেল্প ডেস্ক | https://t.me/mychannel",
+        welcomeButtons: "অফিসিয়াল চ্যানেল | https://t.me/mychannel | green\nহেল্প ডেস্ক | https://t.me/mychannel | blue",
         welcomeAutoDeleteSecs: 30,
         goodbyeEnabled: false,
         goodbyeText: "👋 বিদায় {user}! আবার আসার অনুরোধ রইলো।",
-        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel"
+        goodbyeButtons: "আবার জয়েন করুন | https://t.me/mychannel | green"
       };
     }
 
@@ -1670,7 +1665,7 @@
         violationType = "badword"; logTitle = "Bad Word";
       }
 
-      // Deletion & Specific Warning
+      // Deletion & Specific Warning with Custom Colored Buttons
       if (violationType) {
         try {
           await callTelegramApi('deleteMessage', { chat_id: chatId, message_id: m.message_id });
